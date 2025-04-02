@@ -2,6 +2,7 @@ package guru.qa.niffler.page;
 
 import com.codeborne.selenide.ElementsCollection;
 import com.codeborne.selenide.SelenideElement;
+import guru.qa.niffler.test.web.AllPeoplePage;
 import io.qameta.allure.Step;
 
 import static com.codeborne.selenide.Condition.text;
@@ -44,5 +45,19 @@ public class MainPage {
         contextMenuInAvatarBtn.click();
         contextMenuElements.find(text("Profile")).click();
         return new ProfilePage();
+    }
+
+    @Step("Go to Friends")
+    public FriendsPage goToFriendsList() {
+        contextMenuInAvatarBtn.click();
+        contextMenuElements.find(text("Friends")).click();
+        return new FriendsPage();
+    }
+
+    @Step("Go to All People")
+    public AllPeoplePage goToAllPeopleList() {
+        contextMenuInAvatarBtn.click();
+        contextMenuElements.find(text("All People")).click();
+        return new AllPeoplePage();
     }
 }
