@@ -45,4 +45,18 @@ public class MainPage {
         contextMenuElements.find(text("Profile")).click();
         return new ProfilePage();
     }
+
+    @Step("Go to Friends")
+    public FriendsPage goToFriendsList() {
+        contextMenuInAvatarBtn.click();
+        contextMenuElements.find(text("Friends")).click();
+        return new FriendsPage();
+    }
+
+    @Step("Go to All People")
+    public AllPeoplePage goToAllPeopleList() {
+        contextMenuInAvatarBtn.click();
+        contextMenuElements.find(text("All People")).click();
+        return new AllPeoplePage();
+    }
 }
