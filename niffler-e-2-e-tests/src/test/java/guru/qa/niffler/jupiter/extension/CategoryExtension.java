@@ -1,28 +1,30 @@
-package guru.qa.niffler.jupiter;
+package guru.qa.niffler.jupiter.extension;
 
-import com.github.javafaker.Faker;
 import guru.qa.niffler.api.SpendApiClient;
+import guru.qa.niffler.jupiter.annotation.meta.User;
 import guru.qa.niffler.model.CategoryJson;
+import guru.qa.niffler.test.web.utils.RandomDataUtils;
+import org.apache.commons.lang3.ArrayUtils;
 import org.junit.jupiter.api.extension.*;
 import org.junit.platform.commons.support.AnnotationSupport;
 
-public class CreateCategoryExtension implements BeforeEachCallback, ParameterResolver, AfterTestExecutionCallback {
-    public static final ExtensionContext.Namespace NAMESPACE = ExtensionContext.Namespace.create(CreateCategoryExtension.class);
+public class CategoryExtension implements BeforeEachCallback, ParameterResolver, AfterTestExecutionCallback {
+    public static final ExtensionContext.Namespace NAMESPACE = ExtensionContext.Namespace.create(CategoryExtension.class);
     private final SpendApiClient spendApiClient = new SpendApiClient();
-    Faker faker = new Faker();
 
     @Override
     public void beforeEach(ExtensionContext context) throws Exception {
-        AnnotationSupport.findAnnotation(context.getRequiredTestMethod(), Category.class)
+        AnnotationSupport.findAnnotation(context.getRequiredTestMethod(), User.class)
+                .filter(anno -> ArrayUtils.isNotEmpty(anno.categories()))
                 .ifPresent(anno -> {
                     CategoryJson categoryJson = new CategoryJson(
                             null,
-                            faker.food().ingredient(),
+                            RandomDataUtils.randomCategoryName(),
                             anno.username(),
                             true
                     );
                     CategoryJson createdCategory = spendApiClient.addCategory(categoryJson);
-                    if (anno.archived()){
+                    if (anno.categories()[0].archived()) {
                         CategoryJson archivedCategory = new CategoryJson(
                                 createdCategory.id(),
                                 createdCategory.name(),
@@ -48,7 +50,7 @@ public class CreateCategoryExtension implements BeforeEachCallback, ParameterRes
     @Override
     public void afterTestExecution(ExtensionContext context) throws Exception {
         CategoryJson category = context.getStore(NAMESPACE).get(context.getUniqueId(), CategoryJson.class);
-        if(!category.archived()){
+        if (category != null && !category.archived()) {
             CategoryJson archivedCategory = new CategoryJson(
                     category.id(),
                     category.name(),

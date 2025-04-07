@@ -1,19 +1,19 @@
 package guru.qa.niffler.test.web;
 
 import com.codeborne.selenide.Selenide;
-import com.github.javafaker.Faker;
 import guru.qa.niffler.jupiter.annotation.meta.WebTest;
 import guru.qa.niffler.page.RegisterPage;
+import guru.qa.niffler.test.web.utils.RandomDataUtils;
 import org.junit.jupiter.api.Test;
 
 @WebTest
 public class RegistrationTest {
-    Faker faker = new Faker();
+
 
     @Test
     void shouldRegisterNewUser() {
-        String username = faker.name().username();
-        String password = faker.lorem().word();
+        String username = RandomDataUtils.randomUsername();
+        String password = RandomDataUtils.randomPassword();
         Selenide.open(RegisterPage.URL, RegisterPage.class)
                 .doRegister(username, password, password)
                 .doLogin(username, password)
@@ -23,7 +23,7 @@ public class RegistrationTest {
     @Test
     void shouldNotRegisterUserWithExistingUsername() {
         String username = "nevermindia";
-        String password = faker.lorem().word();
+        String password = RandomDataUtils.randomPassword();
         String errorText = "Username `" + username + "` already exists";
         Selenide.open(RegisterPage.URL, RegisterPage.class)
                 .setUserName(username)
@@ -35,9 +35,9 @@ public class RegistrationTest {
 
     @Test
     void shouldShowErrorIfPasswordAndConfirmPasswordAreNotEqual() {
-        String username = faker.name().username();
-        String password = faker.lorem().word();
-        String submitPassword = faker.lorem().word();
+        String username = RandomDataUtils.randomUsername();
+        String password = RandomDataUtils.randomPassword();
+        String submitPassword = RandomDataUtils.randomPassword();
         String errorText = "Passwords should be equal";
         Selenide.open(RegisterPage.URL, RegisterPage.class)
                 .setUserName(username)
