@@ -108,7 +108,7 @@ public class CategoryDaoJdbc implements CategoryDao {
                 ps.execute();
                 try (ResultSet rs = ps.getResultSet()) {
                     List<CategoryEntity> result = new ArrayList<>();
-                    if (rs.next()) {
+                    while (rs.next()) {
                         CategoryEntity ce = new CategoryEntity();
 
                         ce.setId(rs.getObject("id", UUID.class));

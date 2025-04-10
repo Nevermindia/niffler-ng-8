@@ -63,10 +63,10 @@ public class SpendDaoJdbc implements SpendDao {
                         se.setId(rs.getObject("id", UUID.class));
                         se.setUsername(rs.getString("username"));
                         se.setCurrency(CurrencyValues.valueOf(rs.getString("currency")));
-                        se.setSpendDate((rs.getDate("spendDate")));
+                        se.setSpendDate((rs.getDate("spend_date")));
                         se.setAmount(rs.getDouble("amount"));
                         se.setDescription(rs.getString("description"));
-                        se.setCategory(rs.getObject("category_id", CategoryEntity.class));
+                        se.setCategory(new CategoryEntity(rs.getObject("category_id", UUID.class)));
                         return Optional.of(se);
                     } else {
                         return Optional.empty();
@@ -88,16 +88,16 @@ public class SpendDaoJdbc implements SpendDao {
                 ps.execute();
                 try (ResultSet rs = ps.getResultSet()) {
                     List<SpendEntity> result = new ArrayList<>();
-                    if (rs.next()) {
+                    while (rs.next()) {
                         SpendEntity se = new SpendEntity();
 
                         se.setId(rs.getObject("id", UUID.class));
                         se.setUsername(rs.getString("username"));
                         se.setCurrency(CurrencyValues.valueOf(rs.getString("currency")));
-                        se.setSpendDate((rs.getDate("spendDate")));
+                        se.setSpendDate((rs.getDate("spend_date")));
                         se.setAmount(rs.getDouble("amount"));
                         se.setDescription(rs.getString("description"));
-                        se.setCategory(rs.getObject("category_id", CategoryEntity.class));
+                        se.setCategory(new CategoryEntity(rs.getObject("category_id", UUID.class)));
                         result.add(se);
                     }
                     return result;

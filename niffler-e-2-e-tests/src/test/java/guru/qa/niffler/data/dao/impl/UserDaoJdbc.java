@@ -17,7 +17,7 @@ public class UserDaoJdbc implements UserDao {
     public UserEntity createUser(UserEntity user) {
         try (Connection connection = Databases.connection(CFG.userdataJdbcUrl())) {
             try (PreparedStatement ps = connection.prepareStatement(
-                    "INSERT INTO user (username, currency, firstname, surname, fullname, photo, photoSmall) " +
+                    "INSERT INTO \"user\" (username, currency, firstname, surname, full_name, photo, photo_small) " +
                     "VALUES (?, ?, ?, ?, ?, ?, ? )",
                     Statement.RETURN_GENERATED_KEYS
             )) {
@@ -49,7 +49,7 @@ public class UserDaoJdbc implements UserDao {
     public Optional<UserEntity> findById(UUID id) {
         try (Connection connection = Databases.connection(CFG.userdataJdbcUrl())) {
             try (PreparedStatement ps = connection.prepareStatement(
-                    "SELECT * FROM user WHERE id = ?"
+                    "SELECT * FROM \"user\" WHERE id = ?"
             )) {
                 ps.setObject(1, id);
                 ps.execute();
@@ -62,8 +62,8 @@ public class UserDaoJdbc implements UserDao {
                         ue.setCurrency(CurrencyValues.valueOf(rs.getString("currency")));
                         ue.setFirstname((rs.getString("firstname")));
                         ue.setSurname((rs.getString("surname")));
-                        ue.setFullname((rs.getString("fullname")));
-                        ue.setPhoto((rs.getBytes("photo")));
+                        ue.setFullname((rs.getString("full_name")));
+                        ue.setPhoto((rs.getBytes("photo_small")));
                         ue.setPhotoSmall((rs.getBytes("photoSmall")));
                         return Optional.ofNullable(ue);
                     } else {
@@ -80,7 +80,7 @@ public class UserDaoJdbc implements UserDao {
     public Optional<UserEntity> findByUsername(String username) {
         try (Connection connection = Databases.connection(CFG.userdataJdbcUrl())) {
             try (PreparedStatement ps = connection.prepareStatement(
-                    "SELECT * FROM user WHERE username = ?"
+                    "SELECT * FROM \"user\" WHERE username = ?"
             )) {
                 ps.setObject(1, username);
                 ps.execute();
@@ -93,8 +93,8 @@ public class UserDaoJdbc implements UserDao {
                         ue.setCurrency(CurrencyValues.valueOf(rs.getString("currency")));
                         ue.setFirstname((rs.getString("firstname")));
                         ue.setSurname((rs.getString("surname")));
-                        ue.setFullname((rs.getString("fullname")));
-                        ue.setPhoto((rs.getBytes("photo")));
+                        ue.setFullname((rs.getString("full_name")));
+                        ue.setPhoto((rs.getBytes("photo_small")));
                         ue.setPhotoSmall((rs.getBytes("photoSmall")));
                         return Optional.ofNullable(ue);
                     } else {
@@ -111,7 +111,7 @@ public class UserDaoJdbc implements UserDao {
     public void delete(UserEntity user) {
         try (Connection connection = Databases.connection(CFG.userdataJdbcUrl())) {
             try (PreparedStatement ps = connection.prepareStatement(
-                    "DELETE FROM user WHERE id = ?"
+                    "DELETE FROM \"user\" WHERE id = ?"
             )) {
                 ps.setObject(1, user.getId());
                 ps.executeUpdate();
