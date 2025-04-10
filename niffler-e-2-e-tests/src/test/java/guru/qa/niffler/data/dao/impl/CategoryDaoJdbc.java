@@ -6,6 +6,8 @@ import guru.qa.niffler.data.dao.CategoryDao;
 import guru.qa.niffler.data.entity.spend.CategoryEntity;
 
 import java.sql.*;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Optional;
 import java.util.UUID;
 
@@ -57,11 +59,80 @@ public class CategoryDaoJdbc implements CategoryDao {
                         ce.setUsername(rs.getString("username"));
                         ce.setName(rs.getString("name"));
                         ce.setArchived(rs.getBoolean("archived"));
-                        return Optional.of(ce);
+                        return Optional.ofNullable(ce);
                     } else {
                         return Optional.empty();
                     }
                 }
+            }
+        } catch (SQLException e) {
+            throw new RuntimeException(e);
+        }
+    }
+
+    @Override
+    public Optional<CategoryEntity> findCategoryByUsernameAndCategoryName(String username, String categoryName) {
+        try (Connection connection = Databases.connection(CFG.spendJdbcUrl())) {
+            try (PreparedStatement ps = connection.prepareStatement(
+                    "SELECT * FROM category WHERE username = ? AND name = ?"
+            )) {
+                ps.setString(1, username);
+                ps.setString(2, categoryName);
+                ps.execute();
+                try (ResultSet rs = ps.getResultSet()) {
+                    if (rs.next()) {
+                        CategoryEntity ce = new CategoryEntity();
+
+                        ce.setId(rs.getObject("id", UUID.class));
+                        ce.setUsername(rs.getString("username"));
+                        ce.setName(rs.getString("name"));
+                        ce.setArchived(rs.getBoolean("archived"));
+                        return Optional.ofNullable(ce);
+                    } else {
+                        return Optional.empty();
+                    }
+                }
+            }
+        } catch (SQLException e) {
+            throw new RuntimeException(e);
+        }
+    }
+
+    @Override
+    public List<CategoryEntity> findAllByUsername(String username) {
+        try (Connection connection = Databases.connection(CFG.spendJdbcUrl())) {
+            try (PreparedStatement ps = connection.prepareStatement(
+                    "SELECT * FROM category WHERE username = ?"
+            )) {
+                ps.setObject(1, username);
+                ps.execute();
+                try (ResultSet rs = ps.getResultSet()) {
+                    List<CategoryEntity> result = new ArrayList<>();
+                    while (rs.next()) {
+                        CategoryEntity ce = new CategoryEntity();
+
+                        ce.setId(rs.getObject("id", UUID.class));
+                        ce.setUsername(rs.getString("username"));
+                        ce.setName(rs.getString("name"));
+                        ce.setArchived(rs.getBoolean("archived"));
+                        result.add(ce);
+                    }
+                    return result;
+                }
+            }
+        } catch (SQLException e) {
+            throw new RuntimeException(e);
+        }
+    }
+
+    @Override
+    public void deleteCategory(CategoryEntity category) {
+        try (Connection connection = Databases.connection(CFG.spendJdbcUrl())) {
+            try (PreparedStatement ps = connection.prepareStatement(
+                    "DELETE FROM category WHERE id = ?"
+            )) {
+                ps.setObject(1, category.getId());
+                ps.executeUpdate();
             }
         } catch (SQLException e) {
             throw new RuntimeException(e);
