@@ -10,6 +10,7 @@ import guru.qa.niffler.model.SpendJson;
 
 
 import static guru.qa.niffler.data.Databases.transaction;
+import static java.sql.Connection.TRANSACTION_READ_COMMITTED;
 
 public class SpendDbClient {
     private static final Config CFG = Config.getInstance();
@@ -25,7 +26,7 @@ public class SpendDbClient {
             return SpendJson.fromEntity(
                     new SpendDaoJdbc(connection).create(spendEntity)
             );
-        }, CFG.spendJdbcUrl());
+        }, CFG.spendJdbcUrl(), TRANSACTION_READ_COMMITTED);
     }
 
     public CategoryJson createCategory(CategoryJson category) {
@@ -33,6 +34,6 @@ public class SpendDbClient {
             CategoryEntity categoryEntity = CategoryEntity.fromJson(category);
             return CategoryJson.fromEntity(
                     new CategoryDaoJdbc(connection).create(categoryEntity));
-        }, CFG.spendJdbcUrl());
+        }, CFG.spendJdbcUrl(), TRANSACTION_READ_COMMITTED);
     }
 }
