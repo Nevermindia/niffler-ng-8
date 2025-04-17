@@ -167,7 +167,7 @@ public class UserDbClient {
             authUserEntity.setAccountNonLocked(true);
             authUserEntity.setCredentialsNonExpired(true);
 
-            AuthUserEntity createdAuthUser = authUserDao.createUser(authUserEntity);
+            AuthUserEntity createdAuthUser = authUserDaoSpring.createUser(authUserEntity);
             AuthorityEntity[] userAuthorities = Arrays.stream(Authority.values()).map(
                     e -> {
                         AuthorityEntity ae = new AuthorityEntity();
@@ -176,9 +176,9 @@ public class UserDbClient {
                         return ae;
                     }).toArray(AuthorityEntity[]::new);
 
-            authorityUserDao.createUser(userAuthorities);
+            authorityUserDaoSpring.createUser(userAuthorities);
             return UserJson.fromEntity(
-                    userDao.createUser(UserEntity.fromJson(user)
+                    userDaoSpring.createUser(UserEntity.fromJson(user)
                     ));
         });
     }
