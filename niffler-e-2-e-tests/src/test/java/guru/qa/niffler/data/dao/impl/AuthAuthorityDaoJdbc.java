@@ -1,21 +1,19 @@
 package guru.qa.niffler.data.dao.impl;
 
+import guru.qa.niffler.config.Config;
 import guru.qa.niffler.data.dao.AuthAuthorityDao;
 import guru.qa.niffler.data.entity.userAuth.AuthorityEntity;
 
 import java.sql.*;
-import java.util.UUID;
+
+import static guru.qa.niffler.data.tpl.Connections.holder;
 
 public class AuthAuthorityDaoJdbc implements AuthAuthorityDao {
-    private final Connection connection;
-
-    public AuthAuthorityDaoJdbc(Connection connection) {
-        this.connection = connection;
-    }
+    private static final Config CFG = Config.getInstance();
 
     @Override
     public void createUser(AuthorityEntity... authority) {
-        try (PreparedStatement ps = connection.prepareStatement(
+        try (PreparedStatement ps = holder(CFG.authJdbcUrl()).connection().prepareStatement(
                 "INSERT INTO \"authority\" (user_id, authority) " +
                 "VALUES (?, ? )",
                 Statement.RETURN_GENERATED_KEYS
