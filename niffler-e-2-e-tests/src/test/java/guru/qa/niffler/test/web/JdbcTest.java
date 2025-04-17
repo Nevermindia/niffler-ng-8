@@ -1,14 +1,15 @@
 package guru.qa.niffler.test.web;
 
 import guru.qa.niffler.model.*;
-import guru.qa.niffler.service.AuthUserDbClient;
 import guru.qa.niffler.service.SpendDbClient;
+import guru.qa.niffler.service.UserDbClient;
 import org.junit.jupiter.api.Test;
 
 import java.util.Date;
 
 
 public class JdbcTest {
+    //spend test
     @Test
     void daoTest() {
         SpendDbClient spendDbClient = new SpendDbClient();
@@ -55,24 +56,6 @@ public class JdbcTest {
     }
 
     @Test
-    void authSpringJdbcTest() {
-        AuthUserDbClient authUserDbClient = new AuthUserDbClient();
-        UserJson user = authUserDbClient.createUserSpringJdbc(
-                new UserJson(
-                        null,
-                        "username13",
-                        null,
-                        null,
-                        null,
-                        CurrencyValues.RUB,
-                        null,
-                        null
-                )
-        );
-        System.out.println(user);
-    }
-
-    @Test
     void createSpendJdbcTest() {
         SpendDbClient spendDbClient = new SpendDbClient();
         SpendJson spendJson = spendDbClient.createSpendSpringJdbc(
@@ -92,5 +75,127 @@ public class JdbcTest {
                 )
         );
         System.out.println(spendJson);
+    }
+
+    //auth user tests
+
+    /*
+        jdbc с транзакциями
+        - позитивный тест -> в БД auth и userdata создан пользователь, можно авторизоваться с username/password
+        - негативный тест -> юзера нет в БД auth и userdata
+     */
+    @Test
+    void xaCreateUserJdbcTest() {
+        UserDbClient authUserDbClient = new UserDbClient();
+        UserJson user = authUserDbClient.xaCreateUserJdbc(
+                new UserJson(
+                        null,
+                        "xaCreateUserJdbcTest3",
+                        null,
+                        null,
+                        null,
+                        CurrencyValues.RUB,
+                        null,
+                        null
+                )
+        );
+        System.out.println(user);
+    }
+
+    /*
+        jdbc без транзакций
+        - позитивный тест -> в БД auth и userdata есть пользователь, можно авторизоваться с username/password
+        - негативный тест (user_name == null при создании authority) -> в таблице user в niffler-auth значение есть,
+         в authority нет, в userdata юзера нет
+     */
+
+    @Test
+    void createUserJdbcTest() {
+        UserDbClient authUserDbClient = new UserDbClient();
+        UserJson user = authUserDbClient.createUserJdbc(
+                new UserJson(
+                        null,
+                        "createUserJdbcTest1",
+                        null,
+                        null,
+                        null,
+                        CurrencyValues.RUB,
+                        null,
+                        null
+                )
+        );
+        System.out.println(user);
+    }
+
+    /*
+    spring-jdbc с транзакциями
+    - позитивный тест -> в БД auth и userdata есть пользователь, можно авторизоваться с username/password
+    - негативный тест (username == null в userdata) -> юзер не создан в userdata и в auth
+     */
+    @Test
+    void xaCreateUserSpringJdbcTest() {
+        UserDbClient authUserDbClient = new UserDbClient();
+        UserJson user = authUserDbClient.xaCreateUserSpringJdbc(
+                new UserJson(
+                        null,
+                        "xaCreateUserSpringJdbcTest1",
+                        null,
+                        null,
+                        null,
+                        CurrencyValues.RUB,
+                        null,
+                        null
+                )
+        );
+        System.out.println(user);
+    }
+
+    /*
+    spring-jdbc без транзакции
+    - позитивный тест -> в БД auth и userdata есть пользователь, можно авторизоваться с username/password
+    - негативный тест (user_name == null при создании authority) -> в таблице user в niffler-auth значение есть,
+    в authority нет, в userdata юзера нет
+     */
+    @Test
+    void createUserSpringJdbcTest() {
+        UserDbClient authUserDbClient = new UserDbClient();
+        UserJson user = authUserDbClient.createUserSpringJdbc(
+                new UserJson(
+                        null,
+                        "createUserSpringJdbcTest2",
+                        null,
+                        null,
+                        null,
+                        CurrencyValues.RUB,
+                        null,
+                        null
+                )
+        );
+        System.out.println(user);
+    }
+
+    /*
+    ChainedTransactionManager
+    - позитивный тест -> в БД auth и userdata есть пользователь, можно авторизоваться с username/password
+    - негативный тест (username == null в userdata) -> в таблицах user и authority бд niffler-auth юзер создан,
+    в user бд niffler-userdata пользователь не создан. Созданные данные в таблицах user и authority бд niffler-auth
+    не были откачены после ошибки создания юзера в userdata
+     */
+    @Test
+    void createUserChainedTxManagerTest() {
+        UserDbClient authUserDbClient = new UserDbClient();
+        UserJson user = authUserDbClient.createUserChainedTxManager(
+                new UserJson(
+                        null,
+                        "createUserChainedTxManagerTest1",
+                        null,
+                        null,
+                        null,
+                        CurrencyValues.RUB,
+                        null,
+                        null
+                )
+        );
+        System.out.println(user);
     }
 }
