@@ -1,4 +1,4 @@
-package guru.qa.niffler.data.dao.mapper;
+package guru.qa.niffler.data.mapper;
 
 import guru.qa.niffler.data.entity.spend.CategoryEntity;
 import guru.qa.niffler.data.entity.spend.SpendEntity;
@@ -24,7 +24,7 @@ public class SpendEntityRowMapper implements RowMapper<SpendEntity> {
         result.setCurrency(CurrencyValues.valueOf(rs.getString("currency")));
         result.setAmount(rs.getDouble("amount"));
         result.setDescription(rs.getString("description"));
-        result.setCategory(new CategoryEntity(rs.getObject("category_id", UUID.class)));
+        result.setCategory((rs.getObject("category_id", CategoryEntity.class)));
         return result;
     }
 }

@@ -25,7 +25,7 @@ public class SpendDaoJdbc implements SpendDao {
                 Statement.RETURN_GENERATED_KEYS
         )) {
             ps.setString(1, spend.getUsername());
-            ps.setDate(2, spend.getSpendDate());
+            ps.setDate(2, new java.sql.Date(spend.getSpendDate().getTime()));
             ps.setString(3, spend.getCurrency().name());
             ps.setDouble(4, spend.getAmount());
             ps.setString(5, spend.getDescription());
@@ -64,7 +64,7 @@ public class SpendDaoJdbc implements SpendDao {
                     se.setSpendDate((rs.getDate("spend_date")));
                     se.setAmount(rs.getDouble("amount"));
                     se.setDescription(rs.getString("description"));
-                    se.setCategory(new CategoryEntity(rs.getObject("category_id", UUID.class)));
+                    se.setCategory((rs.getObject("category_id", CategoryEntity.class)));
                     return Optional.of(se);
                 } else {
                     return Optional.empty();
@@ -93,7 +93,7 @@ public class SpendDaoJdbc implements SpendDao {
                     se.setSpendDate((rs.getDate("spend_date")));
                     se.setAmount(rs.getDouble("amount"));
                     se.setDescription(rs.getString("description"));
-                    se.setCategory(new CategoryEntity(rs.getObject("category_id", UUID.class)));
+                    se.setCategory((rs.getObject("category_id", CategoryEntity.class)));
                     result.add(se);
                 }
                 return result;
@@ -119,7 +119,7 @@ public class SpendDaoJdbc implements SpendDao {
                     se.setSpendDate((rs.getDate("spend_date")));
                     se.setAmount(rs.getDouble("amount"));
                     se.setDescription(rs.getString("description"));
-                    se.setCategory(new CategoryEntity(rs.getObject("category_id", UUID.class)));
+                    se.setCategory((rs.getObject("category_id", CategoryEntity.class)));
                     result.add(se);
                 }
                 return result;
