@@ -15,11 +15,10 @@ public class AuthAuthorityDaoJdbc implements AuthAuthorityDao {
     public void createUser(AuthorityEntity... authority) {
         try (PreparedStatement ps = holder(CFG.authJdbcUrl()).connection().prepareStatement(
                 "INSERT INTO \"authority\" (user_id, authority) " +
-                "VALUES (?, ? )",
-                Statement.RETURN_GENERATED_KEYS
+                "VALUES (?, ? )"
         )) {
             for (AuthorityEntity authorityEntity : authority) {
-                ps.setObject(1, authorityEntity.getUserId());
+                ps.setObject(1, authorityEntity.getUser().getId());
                 ps.setString(2, authorityEntity.getAuthority().name());
                 ps.addBatch();
             }

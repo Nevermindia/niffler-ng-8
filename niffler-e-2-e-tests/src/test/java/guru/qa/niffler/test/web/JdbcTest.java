@@ -19,7 +19,7 @@ public class JdbcTest {
                         new Date(),
                         new CategoryJson(
                                 null,
-                                "test-cat-name-2",
+                                "test-cat-name-3",
                                 "nevermindia",
                                 false
                         ),
@@ -42,13 +42,13 @@ public class JdbcTest {
                         new Date(),
                         new CategoryJson(
                                 null,
-                                "test-cat-tx",
+                                "test-cat-tx1",
                                 "nevermindia",
                                 false
                         ),
                         CurrencyValues.RUB,
                         100.0,
-                        "test-cat-tx",
+                        "test-cat-tx1",
                         "nevermindia"
                 )
         );
@@ -90,7 +90,7 @@ public class JdbcTest {
         UserJson user = authUserDbClient.xaCreateUserJdbc(
                 new UserJson(
                         null,
-                        "xaCreateUserJdbcTest3",
+                        "xaCreateUserJdbcTest4",
                         null,
                         null,
                         null,
@@ -188,6 +188,29 @@ public class JdbcTest {
                 new UserJson(
                         null,
                         "createUserChainedTxManagerTest1",
+                        null,
+                        null,
+                        null,
+                        CurrencyValues.RUB,
+                        null,
+                        null
+                )
+        );
+        System.out.println(user);
+    }
+
+
+    /*
+    проверка метода xaCreateUserRepository
+     */
+
+    @Test
+    void createUserWithRepositoryTest() {
+        UserDbClient authUserDbClient = new UserDbClient();
+        UserJson user = authUserDbClient.xaCreateUserRepository(
+                new UserJson(
+                        null,
+                        "xaCreateUserRepository1",
                         null,
                         null,
                         null,
