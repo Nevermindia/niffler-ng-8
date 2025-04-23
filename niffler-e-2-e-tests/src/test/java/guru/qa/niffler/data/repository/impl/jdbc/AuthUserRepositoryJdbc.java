@@ -1,7 +1,6 @@
-package guru.qa.niffler.data.repository.impl;
+package guru.qa.niffler.data.repository.impl.jdbc;
 
 import guru.qa.niffler.config.Config;
-import guru.qa.niffler.data.dao.AuthUserDao;
 import guru.qa.niffler.data.entity.userAuth.AuthUserEntity;
 import guru.qa.niffler.data.entity.userAuth.Authority;
 import guru.qa.niffler.data.entity.userAuth.AuthorityEntity;
@@ -127,33 +126,6 @@ public class AuthUserRepositoryJdbc implements AuthUserRepository {
                 } else {
                     return Optional.empty();
                 }
-            }
-        } catch (SQLException e) {
-            throw new RuntimeException(e);
-        }
-    }
-
-    @Override
-    public List<AuthUserEntity> findAll() {
-        try (PreparedStatement ps = holder(CFG.authJdbcUrl()).connection().prepareStatement(
-                "SELECT * FROM \"user\""
-        )) {
-            ps.execute();
-            List<AuthUserEntity> result = new ArrayList<>();
-            try (ResultSet rs = ps.getResultSet()) {
-                while (rs.next()) {
-                    AuthUserEntity ue = new AuthUserEntity();
-
-                    ue.setId(rs.getObject("id", UUID.class));
-                    ue.setUsername(rs.getString("username"));
-                    ue.setPassword(rs.getString("password"));
-                    ue.setEnabled((rs.getBoolean("enabled")));
-                    ue.setAccountNonExpired((rs.getBoolean("account_non_expired")));
-                    ue.setAccountNonLocked((rs.getBoolean("account_non_locked")));
-                    ue.setCredentialsNonExpired((rs.getBoolean("credentials_non_expired")));
-                    result.add(ue);
-                }
-                return result;
             }
         } catch (SQLException e) {
             throw new RuntimeException(e);

@@ -1,11 +1,15 @@
 package guru.qa.niffler.test.web;
 
+import guru.qa.niffler.data.entity.spend.SpendEntity;
+import guru.qa.niffler.data.repository.impl.jdbc.SpendRepositoryJdbc;
+import guru.qa.niffler.data.repository.impl.spring.SpendRepositorySpringJdbc;
 import guru.qa.niffler.model.*;
 import guru.qa.niffler.service.SpendDbClient;
 import guru.qa.niffler.service.UserDbClient;
 import org.junit.jupiter.api.Test;
 
 import java.util.Date;
+import java.util.Optional;
 
 
 public class JdbcTest {
@@ -220,5 +224,147 @@ public class JdbcTest {
                 )
         );
         System.out.println(user);
+    }
+
+    /*
+    Проверка создания пользователей, которые являются друзьями
+     */
+    @Test
+    void createUserWithFriendWithRepositoryTest() {
+        UserDbClient userDbClient = new UserDbClient();
+        UserJson user1 = userDbClient.xaCreateUserRepository(
+                new UserJson(
+                        null,
+                        "Biba",
+                        null,
+                        null,
+                        null,
+                        CurrencyValues.RUB,
+                        null,
+                        null
+                )
+        );
+
+        UserJson user2 = userDbClient.xaCreateUserRepository(
+                new UserJson(
+                        null,
+                        "Boba",
+                        null,
+                        null,
+                        null,
+                        CurrencyValues.RUB,
+                        null,
+                        null
+                )
+        );
+        userDbClient.addFriend(user1, user2);
+    }
+
+    /*
+    Проверка создания пользователя, у которого есть запрос на дружбу
+     */
+    @Test
+    void createUserWithRequestWithRepositoryTest() {
+        UserDbClient userDbClient = new UserDbClient();
+        //у пользователя Addressee будет входящий запрос на дружбу
+        UserJson addressee = userDbClient.xaCreateUserRepository(
+                new UserJson(
+                        null,
+                        "Addressee",
+                        null,
+                        null,
+                        null,
+                        CurrencyValues.RUB,
+                        null,
+                        null
+                )
+        );
+        //у пользователя Requester будет исходящий запрос
+        UserJson requester = userDbClient.xaCreateUserRepository(
+                new UserJson(
+                        null,
+                        "Requester",
+                        null,
+                        null,
+                        null,
+                        CurrencyValues.RUB,
+                        null,
+                        null
+                )
+        );
+        userDbClient.addInvitation(requester, addressee);
+    }
+
+    /*
+    проверка метода xaCreateUserSpringRepository
+     */
+    @Test
+    void createUserWithSpringRepositoryTest() {
+        UserDbClient authUserDbClient = new UserDbClient();
+        UserJson user = authUserDbClient.xaCreateUserSpringRepository(
+                new UserJson(
+                        null,
+                        "xaCreateUserSpringRepository",
+                        null,
+                        null,
+                        null,
+                        CurrencyValues.RUB,
+                        null,
+                        null
+                )
+        );
+        System.out.println(user);
+    }
+
+    @Test
+    void spendRepositoryJdbcTest() {
+        SpendRepositoryJdbc spendRepositoryJdbc = new SpendRepositoryJdbc();
+        SpendEntity spend = SpendEntity.fromJson(
+                new SpendJson(
+                        null,
+                        new Date(),
+                        new CategoryJson(
+                                null,
+                                "test-cat-name-10",
+                                "nevermindia",
+                                false
+                        ),
+                        CurrencyValues.RUB,
+                        100.0,
+                        "tets desc",
+                        "nevermindia"
+                )
+        );
+        SpendEntity spendEntity = spendRepositoryJdbc.create(spend);
+
+        Optional<SpendEntity> spendById = spendRepositoryJdbc.findSpendById(spendEntity.getId());
+        SpendJson spendJsonById = SpendJson.fromEntity(spendById.orElseThrow());
+        System.out.println(spendJsonById);
+    }
+
+    @Test
+    void spendRepositorySpringJdbc() {
+        SpendRepositorySpringJdbc spendRepositoryJdbc = new SpendRepositorySpringJdbc();
+        SpendEntity spend = SpendEntity.fromJson(
+                new SpendJson(
+                        null,
+                        new Date(),
+                        new CategoryJson(
+                                null,
+                                "test-cat-name-16",
+                                "nevermindia",
+                                false
+                        ),
+                        CurrencyValues.RUB,
+                        100.0,
+                        "tets desc",
+                        "nevermindia"
+                )
+        );
+        SpendEntity spendEntity = spendRepositoryJdbc.create(spend);
+
+        Optional<SpendEntity> spendById = spendRepositoryJdbc.findSpendById(spendEntity.getId());
+        SpendJson spendJsonById = SpendJson.fromEntity(spendById.orElseThrow());
+        System.out.println(spendJsonById);
     }
 }
