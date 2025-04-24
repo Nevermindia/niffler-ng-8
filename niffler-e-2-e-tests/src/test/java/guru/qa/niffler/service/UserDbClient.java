@@ -10,7 +10,11 @@ import guru.qa.niffler.data.entity.userAuth.AuthorityEntity;
 import guru.qa.niffler.data.entity.userdata.UserEntity;
 import guru.qa.niffler.data.entity.userAuth.Authority;
 import guru.qa.niffler.data.repository.AuthUserRepository;
-import guru.qa.niffler.data.repository.impl.AuthUserRepositoryJdbc;
+import guru.qa.niffler.data.repository.UserDataRepository;
+import guru.qa.niffler.data.repository.impl.jdbc.AuthUserRepositoryJdbc;
+import guru.qa.niffler.data.repository.impl.spring.AuthUserRepositorySpringJdbc;
+import guru.qa.niffler.data.repository.impl.jdbc.UserDataRepositoryJdbc;
+import guru.qa.niffler.data.repository.impl.spring.UserDataRepositorySpringJdbc;
 import guru.qa.niffler.data.tpl.XaTransactionTemplate;
 import guru.qa.niffler.model.UserJson;
 import org.springframework.data.transaction.ChainedTransactionManager;
@@ -36,8 +40,13 @@ public class UserDbClient {
     private final AuthAuthorityDao authorityUserDaoSpring = new AuthAuthorityDaoSpringJdbc();
     private final UserDao userDaoSpring = new UserDaoSpringJdbc();
 
-    //repository
+    //repository jdbc
     private final AuthUserRepository authUserRepository = new AuthUserRepositoryJdbc();
+    private final UserDataRepository userDataRepository = new UserDataRepositoryJdbc();
+
+    //repository spring jdbc
+    private final AuthUserRepository authUserSpringRepository = new AuthUserRepositorySpringJdbc();
+    private final UserDataRepository userDataSpringRepository = new UserDataRepositorySpringJdbc();
 
     private final TransactionTemplate xaTransactionTemplateChained = new TransactionTemplate(
             new ChainedTransactionManager(
@@ -188,7 +197,7 @@ public class UserDbClient {
         });
     }
 
-    //создание юзера с repository
+    //создание юзера с repository JDBC
     public UserJson xaCreateUserRepository(UserJson user) {
         return xaTransactionTemplate.execute(() -> {
             AuthUserEntity authUserEntity = new AuthUserEntity();
@@ -211,7 +220,46 @@ public class UserDbClient {
             authUserRepository.createUser(authUserEntity);
 
             return UserJson.fromEntity(
-                    userDao.createUser(UserEntity.fromJson(user)
+                    userDataRepository.createUser(UserEntity.fromJson(user)
+                    ));
+        });
+    }
+
+    public void addFriend(UserJson user, UserJson friend) {
+        xaTransactionTemplate.execute(() -> {
+            userDataRepository.addFriend(UserEntity.fromJson(user), UserEntity.fromJson(friend));
+            return null;
+        });
+    }
+
+    public void addInvitation(UserJson requester, UserJson addressee){
+        userDataRepository.addFriendshipRequest(UserEntity.fromJson(requester), UserEntity.fromJson(addressee));
+    }
+
+    //создание юзера с repository Spring JDBC
+    public UserJson xaCreateUserSpringRepository(UserJson user) {
+        return xaTransactionTemplate.execute(() -> {
+            AuthUserEntity authUserEntity = new AuthUserEntity();
+            authUserEntity.setUsername(user.username());
+            authUserEntity.setPassword(pe.encode("12345"));
+            authUserEntity.setEnabled(true);
+            authUserEntity.setAccountNonExpired(true);
+            authUserEntity.setAccountNonLocked(true);
+            authUserEntity.setCredentialsNonExpired(true);
+            authUserEntity.setAuthorities(
+                    Arrays.stream(Authority.values()).map(
+                            e -> {
+                                AuthorityEntity ae = new AuthorityEntity();
+                                ae.setUser(authUserEntity);
+                                ae.setAuthority(e);
+                                return ae;
+                            }).toList()
+            );
+
+            authUserSpringRepository.createUser(authUserEntity);
+
+            return UserJson.fromEntity(
+                    userDataSpringRepository.createUser(UserEntity.fromJson(user)
                     ));
         });
     }
