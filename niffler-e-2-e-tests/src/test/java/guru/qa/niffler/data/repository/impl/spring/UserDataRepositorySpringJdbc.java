@@ -107,7 +107,24 @@ public class UserDataRepositorySpringJdbc implements UserDataRepository {
     }
 
     @Override
-    public void addFriendshipRequest(UserEntity requester, UserEntity addressee) {
+    public void addOutcomeRequest(UserEntity requester, UserEntity addressee) {
+        JdbcTemplate jdbcTemplate = new JdbcTemplate(DataSources.dataSource(CFG.userdataJdbcUrl()));
+        jdbcTemplate.update(
+                con -> {
+                    PreparedStatement ps = holder(CFG.userdataJdbcUrl()).connection().prepareStatement(
+                            "INSERT INTO friendship (requester_id, addressee_id, status) " +
+                            "VALUES (?, ?, ? )");
+                    ps.setObject(1, addressee.getId());
+                    ps.setObject(2, requester.getId());
+                    ps.setString(3, PENDING.name());
+                    return ps;
+                }
+        );
+
+    }
+
+    @Override
+    public void addIncomeRequest(UserEntity requester, UserEntity addressee) {
         JdbcTemplate jdbcTemplate = new JdbcTemplate(DataSources.dataSource(CFG.userdataJdbcUrl()));
         jdbcTemplate.update(
                 con -> {

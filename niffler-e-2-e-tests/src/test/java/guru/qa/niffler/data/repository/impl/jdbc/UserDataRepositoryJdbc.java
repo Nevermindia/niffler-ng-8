@@ -66,8 +66,8 @@ public class UserDataRepositoryJdbc implements UserDataRepository {
                     ue.setFirstname((rs.getString("firstname")));
                     ue.setSurname((rs.getString("surname")));
                     ue.setFullname((rs.getString("full_name")));
-                    ue.setPhoto((rs.getBytes("photo_small")));
-                    ue.setPhotoSmall((rs.getBytes("photoSmall")));
+                    ue.setPhoto((rs.getBytes("photo")));
+                    ue.setPhotoSmall((rs.getBytes("photo_small")));
                     return Optional.ofNullable(ue);
                 } else {
                     return Optional.empty();
@@ -128,7 +128,22 @@ public class UserDataRepositoryJdbc implements UserDataRepository {
     }
 
     @Override
-    public void addFriendshipRequest(UserEntity requester, UserEntity addressee) {
+    public void addOutcomeRequest(UserEntity requester, UserEntity addressee) {
+        try (PreparedStatement ps = holder(CFG.userdataJdbcUrl()).connection().prepareStatement(
+                "INSERT INTO friendship (requester_id, addressee_id, status) " +
+                "VALUES (?, ?, ? )"
+        )) {
+            ps.setObject(1, addressee.getId());
+            ps.setObject(2, requester.getId());
+            ps.setString(3, PENDING.name());
+            ps.executeUpdate();
+        } catch (SQLException e) {
+            throw new RuntimeException(e);
+        }
+    }
+
+    @Override
+    public void addIncomeRequest(UserEntity requester, UserEntity addressee) {
         try (PreparedStatement ps = holder(CFG.userdataJdbcUrl()).connection().prepareStatement(
                 "INSERT INTO friendship (requester_id, addressee_id, status) " +
                 "VALUES (?, ?, ? )"
