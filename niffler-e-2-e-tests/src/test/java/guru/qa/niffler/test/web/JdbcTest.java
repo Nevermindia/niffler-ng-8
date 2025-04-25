@@ -7,6 +7,8 @@ import guru.qa.niffler.model.*;
 import guru.qa.niffler.service.SpendDbClient;
 import guru.qa.niffler.service.UserDbClient;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.params.ParameterizedTest;
+import org.junit.jupiter.params.provider.ValueSource;
 
 import java.util.Date;
 import java.util.Optional;
@@ -292,7 +294,7 @@ public class JdbcTest {
                         null
                 )
         );
-        userDbClient.addInvitation(requester, addressee);
+        userDbClient.addOutcomeInvitation(requester, 1);
     }
 
     /*
@@ -367,4 +369,22 @@ public class JdbcTest {
         SpendJson spendJsonById = SpendJson.fromEntity(spendById.orElseThrow());
         System.out.println(spendJsonById);
     }
+
+    /*
+    проверка метода xaCreateUserHibernateRepository
+     */
+    @ValueSource(strings = {
+            "xaCreateUserHibernateRepository12",
+    })
+    @ParameterizedTest
+    void xaCreateUserHibernateRepository(String username) {
+        UserDbClient userDbClient = new UserDbClient();
+
+        UserJson user = userDbClient.xaCreateUserHibernateRepository(
+                username, "12345"
+        );
+        userDbClient.addIncomeInvitation(user, 1);
+        userDbClient.addOutcomeInvitation(user, 1);
+    }
+
 }

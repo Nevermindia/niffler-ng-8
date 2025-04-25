@@ -14,5 +14,7 @@ public interface UserDataRepository {
 
     void addFriend(UserEntity requester, UserEntity addressee);
 
-    void addFriendshipRequest(UserEntity requester, UserEntity addressee);
+    void addOutcomeRequest(UserEntity requester, UserEntity addressee);
+
+    void addIncomeRequest(UserEntity requester, UserEntity addressee);
 }
