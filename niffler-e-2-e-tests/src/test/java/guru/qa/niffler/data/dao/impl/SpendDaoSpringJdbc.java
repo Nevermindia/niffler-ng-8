@@ -43,6 +43,28 @@ public class SpendDaoSpringJdbc implements SpendDao {
     }
 
     @Override
+    public SpendEntity update(SpendEntity spend) {
+        JdbcTemplate jdbcTemplate = new JdbcTemplate(DataSources.dataSource(CFG.spendJdbcUrl()));
+        KeyHolder kh = new GeneratedKeyHolder();
+        jdbcTemplate.update(
+                con -> {
+                    PreparedStatement ps = con.prepareStatement(
+                            "UPDATE spend SET spend_date = ?, currency = ?, amount = ?, description = ? WHERE id = ?",
+                            Statement.RETURN_GENERATED_KEYS);
+                    ps.setDate(2, new java.sql.Date(spend.getSpendDate().getTime()));
+                    ps.setString(2, spend.getCurrency().name());
+                    ps.setDouble(3, spend.getAmount());
+                    ps.setString(4, spend.getDescription());
+                    ps.setObject(5, spend.getId());
+                    return ps;
+                }, kh
+        );
+        final UUID generatedKey = (UUID) kh.getKeys().get("id");
+        spend.setId(generatedKey);
+        return spend;
+    }
+
+    @Override
     public Optional<SpendEntity> findSpendById(UUID id) {
         JdbcTemplate jdbcTemplate = new JdbcTemplate(DataSources.dataSource(CFG.spendJdbcUrl()));
         return Optional.ofNullable(
@@ -61,6 +83,18 @@ public class SpendDaoSpringJdbc implements SpendDao {
                 "SELECT * FROM spend WHERE username = ?",
                 SpendEntityRowMapper.instance,
                 username
+        );
+    }
+
+    @Override
+    public Optional<SpendEntity> findByUsernameAndSpendDescription(String username, String description) {
+        JdbcTemplate jdbcTemplate = new JdbcTemplate(DataSources.dataSource(CFG.spendJdbcUrl()));
+        return Optional.ofNullable(
+                jdbcTemplate.queryForObject(
+                        "SELECT * FROM spend WHERE username = ? AND description = ?",
+                        SpendEntityRowMapper.instance,
+                        username, description
+                )
         );
     }
 

@@ -1,25 +1,36 @@
 package guru.qa.niffler.test.web;
 
 import guru.qa.niffler.data.entity.spend.SpendEntity;
+import guru.qa.niffler.data.entity.userAuth.AuthUserEntity;
+import guru.qa.niffler.data.repository.AuthUserRepository;
+import guru.qa.niffler.data.repository.SpendRepository;
+import guru.qa.niffler.data.repository.UserDataRepository;
+import guru.qa.niffler.data.repository.impl.hibernate.AuthUserRepositoryHibernate;
+import guru.qa.niffler.data.repository.impl.hibernate.SpendRepositoryHibernate;
+import guru.qa.niffler.data.repository.impl.hibernate.UserDataRepositoryHibernate;
+import guru.qa.niffler.data.repository.impl.jdbc.AuthUserRepositoryJdbc;
 import guru.qa.niffler.data.repository.impl.jdbc.SpendRepositoryJdbc;
 import guru.qa.niffler.data.repository.impl.spring.SpendRepositorySpringJdbc;
 import guru.qa.niffler.model.*;
-import guru.qa.niffler.service.SpendDbClient;
-import guru.qa.niffler.service.UserDbClient;
+import guru.qa.niffler.service.SpendClient;
+import guru.qa.niffler.service.impl.SpendDbClient;
+import guru.qa.niffler.service.impl.UsersDbClient;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.ValueSource;
 
 import java.util.Date;
 import java.util.Optional;
+import java.util.UUID;
 
 
 public class JdbcTest {
+
     //spend test
     @Test
     void daoTest() {
         SpendDbClient spendDbClient = new SpendDbClient();
-        SpendJson spend = spendDbClient.createSpend(
+        SpendJson spend = spendDbClient.createSpendJdbc(
                 new SpendJson(
                         null,
                         new Date(),
@@ -42,7 +53,7 @@ public class JdbcTest {
     void txTest() {
         SpendDbClient spendDbClient = new SpendDbClient();
 
-        SpendJson spend = spendDbClient.createSpend(
+        SpendJson spend = spendDbClient.createSpendJdbc(
                 new SpendJson(
                         null,
                         new Date(),
@@ -64,7 +75,7 @@ public class JdbcTest {
     @Test
     void createSpendJdbcTest() {
         SpendDbClient spendDbClient = new SpendDbClient();
-        SpendJson spendJson = spendDbClient.createSpendSpringJdbc(
+        SpendJson spendJson = spendDbClient.createSpendSpring(
                 new SpendJson(
                         null,
                         new Date(),
@@ -83,30 +94,30 @@ public class JdbcTest {
         System.out.println(spendJson);
     }
 
-    //auth user tests
-
-    /*
-        jdbc с транзакциями
-        - позитивный тест -> в БД auth и userdata создан пользователь, можно авторизоваться с username/password
-        - негативный тест -> юзера нет в БД auth и userdata
-     */
-    @Test
-    void xaCreateUserJdbcTest() {
-        UserDbClient authUserDbClient = new UserDbClient();
-        UserJson user = authUserDbClient.xaCreateUserJdbc(
-                new UserJson(
-                        null,
-                        "xaCreateUserJdbcTest4",
-                        null,
-                        null,
-                        null,
-                        CurrencyValues.RUB,
-                        null,
-                        null
-                )
-        );
-        System.out.println(user);
-    }
+//    //auth user tests
+//
+//    /*
+//        jdbc с транзакциями
+//        - позитивный тест -> в БД auth и userdata создан пользователь, можно авторизоваться с username/password
+//        - негативный тест -> юзера нет в БД auth и userdata
+//     */
+//    @Test
+//    void xaCreateUserJdbcTest() {
+//        UserDbClient authUserDbClient = new UserDbClient();
+//        UserJson user = authUserDbClient.xaCreateUserJdbc(
+//                new UserJson(
+//                        null,
+//                        "xaCreateUserJdbcTest4",
+//                        null,
+//                        null,
+//                        null,
+//                        CurrencyValues.RUB,
+//                        null,
+//                        null
+//                )
+//        );
+//        System.out.println(user);
+//    }
 
     /*
         jdbc без транзакций
@@ -115,95 +126,95 @@ public class JdbcTest {
          в authority нет, в userdata юзера нет
      */
 
-    @Test
-    void createUserJdbcTest() {
-        UserDbClient authUserDbClient = new UserDbClient();
-        UserJson user = authUserDbClient.createUserJdbc(
-                new UserJson(
-                        null,
-                        "createUserJdbcTest1",
-                        null,
-                        null,
-                        null,
-                        CurrencyValues.RUB,
-                        null,
-                        null
-                )
-        );
-        System.out.println(user);
-    }
+//    @Test
+//    void createUserJdbcTest() {
+//        UserDbClient authUserDbClient = new UserDbClient();
+//        UserJson user = authUserDbClient.createUserJdbc(
+//                new UserJson(
+//                        null,
+//                        "createUserJdbcTest1",
+//                        null,
+//                        null,
+//                        null,
+//                        CurrencyValues.RUB,
+//                        null,
+//                        null
+//                )
+//        );
+//        System.out.println(user);
+//    }
+//
+//    /*
+//    spring-jdbc с транзакциями
+//    - позитивный тест -> в БД auth и userdata есть пользователь, можно авторизоваться с username/password
+//    - негативный тест (username == null в userdata) -> юзер не создан в userdata и в auth
+//     */
+//    @Test
+//    void xaCreateUserSpringJdbcTest() {
+//        UserDbClient authUserDbClient = new UserDbClient();
+//        UserJson user = authUserDbClient.xaCreateUserSpringJdbc(
+//                new UserJson(
+//                        null,
+//                        "xaCreateUserSpringJdbcTest1",
+//                        null,
+//                        null,
+//                        null,
+//                        CurrencyValues.RUB,
+//                        null,
+//                        null
+//                )
+//        );
+//        System.out.println(user);
+//    }
 
-    /*
-    spring-jdbc с транзакциями
-    - позитивный тест -> в БД auth и userdata есть пользователь, можно авторизоваться с username/password
-    - негативный тест (username == null в userdata) -> юзер не создан в userdata и в auth
-     */
-    @Test
-    void xaCreateUserSpringJdbcTest() {
-        UserDbClient authUserDbClient = new UserDbClient();
-        UserJson user = authUserDbClient.xaCreateUserSpringJdbc(
-                new UserJson(
-                        null,
-                        "xaCreateUserSpringJdbcTest1",
-                        null,
-                        null,
-                        null,
-                        CurrencyValues.RUB,
-                        null,
-                        null
-                )
-        );
-        System.out.println(user);
-    }
+//    /*
+//    spring-jdbc без транзакции
+//    - позитивный тест -> в БД auth и userdata есть пользователь, можно авторизоваться с username/password
+//    - негативный тест (user_name == null при создании authority) -> в таблице user в niffler-auth значение есть,
+//    в authority нет, в userdata юзера нет
+//     */
+//    @Test
+//    void createUserSpringJdbcTest() {
+//        UserDbClient authUserDbClient = new UserDbClient();
+//        UserJson user = authUserDbClient.createUserSpringJdbc(
+//                new UserJson(
+//                        null,
+//                        "createUserSpringJdbcTest2",
+//                        null,
+//                        null,
+//                        null,
+//                        CurrencyValues.RUB,
+//                        null,
+//                        null
+//                )
+//        );
+//        System.out.println(user);
+//    }
 
-    /*
-    spring-jdbc без транзакции
-    - позитивный тест -> в БД auth и userdata есть пользователь, можно авторизоваться с username/password
-    - негативный тест (user_name == null при создании authority) -> в таблице user в niffler-auth значение есть,
-    в authority нет, в userdata юзера нет
-     */
-    @Test
-    void createUserSpringJdbcTest() {
-        UserDbClient authUserDbClient = new UserDbClient();
-        UserJson user = authUserDbClient.createUserSpringJdbc(
-                new UserJson(
-                        null,
-                        "createUserSpringJdbcTest2",
-                        null,
-                        null,
-                        null,
-                        CurrencyValues.RUB,
-                        null,
-                        null
-                )
-        );
-        System.out.println(user);
-    }
-
-    /*
-    ChainedTransactionManager
-    - позитивный тест -> в БД auth и userdata есть пользователь, можно авторизоваться с username/password
-    - негативный тест (username == null в userdata) -> в таблицах user и authority бд niffler-auth юзер создан,
-    в user бд niffler-userdata пользователь не создан. Созданные данные в таблицах user и authority бд niffler-auth
-    не были откачены после ошибки создания юзера в userdata
-     */
-    @Test
-    void createUserChainedTxManagerTest() {
-        UserDbClient authUserDbClient = new UserDbClient();
-        UserJson user = authUserDbClient.createUserChainedTxManager(
-                new UserJson(
-                        null,
-                        "createUserChainedTxManagerTest1",
-                        null,
-                        null,
-                        null,
-                        CurrencyValues.RUB,
-                        null,
-                        null
-                )
-        );
-        System.out.println(user);
-    }
+//    /*
+//    ChainedTransactionManager
+//    - позитивный тест -> в БД auth и userdata есть пользователь, можно авторизоваться с username/password
+//    - негативный тест (username == null в userdata) -> в таблицах user и authority бд niffler-auth юзер создан,
+//    в user бд niffler-userdata пользователь не создан. Созданные данные в таблицах user и authority бд niffler-auth
+//    не были откачены после ошибки создания юзера в userdata
+//     */
+//    @Test
+//    void createUserChainedTxManagerTest() {
+//        UserDbClient authUserDbClient = new UserDbClient();
+//        UserJson user = authUserDbClient.createUserChainedTxManager(
+//                new UserJson(
+//                        null,
+//                        "createUserChainedTxManagerTest1",
+//                        null,
+//                        null,
+//                        null,
+//                        CurrencyValues.RUB,
+//                        null,
+//                        null
+//                )
+//        );
+//        System.out.println(user);
+//    }
 
 
     /*
@@ -212,8 +223,8 @@ public class JdbcTest {
 
     @Test
     void createUserWithRepositoryTest() {
-        UserDbClient authUserDbClient = new UserDbClient();
-        UserJson user = authUserDbClient.xaCreateUserRepository(
+        UsersDbClient authUsersDbClient = new UsersDbClient();
+        UserJson user = authUsersDbClient.xaCreateUserRepository(
                 new UserJson(
                         null,
                         "xaCreateUserRepository1",
@@ -233,8 +244,8 @@ public class JdbcTest {
      */
     @Test
     void createUserWithFriendWithRepositoryTest() {
-        UserDbClient userDbClient = new UserDbClient();
-        UserJson user1 = userDbClient.xaCreateUserRepository(
+        UsersDbClient usersDbClient = new UsersDbClient();
+        UserJson user1 = usersDbClient.xaCreateUserRepository(
                 new UserJson(
                         null,
                         "Biba",
@@ -247,7 +258,7 @@ public class JdbcTest {
                 )
         );
 
-        UserJson user2 = userDbClient.xaCreateUserRepository(
+        UserJson user2 = usersDbClient.xaCreateUserRepository(
                 new UserJson(
                         null,
                         "Boba",
@@ -259,7 +270,7 @@ public class JdbcTest {
                         null
                 )
         );
-        userDbClient.addFriend(user1, user2);
+        usersDbClient.addFriend(user1, user2);
     }
 
     /*
@@ -267,9 +278,9 @@ public class JdbcTest {
      */
     @Test
     void createUserWithRequestWithRepositoryTest() {
-        UserDbClient userDbClient = new UserDbClient();
+        UsersDbClient usersDbClient = new UsersDbClient();
         //у пользователя Addressee будет входящий запрос на дружбу
-        UserJson addressee = userDbClient.xaCreateUserRepository(
+        UserJson addressee = usersDbClient.xaCreateUserRepository(
                 new UserJson(
                         null,
                         "Addressee",
@@ -282,7 +293,7 @@ public class JdbcTest {
                 )
         );
         //у пользователя Requester будет исходящий запрос
-        UserJson requester = userDbClient.xaCreateUserRepository(
+        UserJson requester = usersDbClient.xaCreateUserRepository(
                 new UserJson(
                         null,
                         "Requester",
@@ -294,7 +305,7 @@ public class JdbcTest {
                         null
                 )
         );
-        userDbClient.addOutcomeInvitation(requester, 1);
+        usersDbClient.addOutcomeInvitation(requester, 1);
     }
 
     /*
@@ -302,8 +313,8 @@ public class JdbcTest {
      */
     @Test
     void createUserWithSpringRepositoryTest() {
-        UserDbClient authUserDbClient = new UserDbClient();
-        UserJson user = authUserDbClient.xaCreateUserSpringRepository(
+        UsersDbClient authUsersDbClient = new UsersDbClient();
+        UserJson user = authUsersDbClient.xaCreateUserSpringRepository(
                 new UserJson(
                         null,
                         "xaCreateUserSpringRepository",
@@ -339,7 +350,7 @@ public class JdbcTest {
         );
         SpendEntity spendEntity = spendRepositoryJdbc.create(spend);
 
-        Optional<SpendEntity> spendById = spendRepositoryJdbc.findSpendById(spendEntity.getId());
+        Optional<SpendEntity> spendById = spendRepositoryJdbc.findById(spendEntity.getId());
         SpendJson spendJsonById = SpendJson.fromEntity(spendById.orElseThrow());
         System.out.println(spendJsonById);
     }
@@ -378,13 +389,12 @@ public class JdbcTest {
     })
     @ParameterizedTest
     void xaCreateUserHibernateRepository(String username) {
-        UserDbClient userDbClient = new UserDbClient();
+        UsersDbClient usersDbClient = new UsersDbClient();
 
-        UserJson user = userDbClient.xaCreateUserHibernateRepository(
+        UserJson user = usersDbClient.xaCreateUserHibernateRepository(
                 username, "12345"
         );
-        userDbClient.addIncomeInvitation(user, 1);
-        userDbClient.addOutcomeInvitation(user, 1);
+        usersDbClient.addIncomeInvitation(user, 1);
+        usersDbClient.addOutcomeInvitation(user, 1);
     }
-
 }

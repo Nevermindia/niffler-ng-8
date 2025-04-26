@@ -40,6 +40,26 @@ public class CategoryDaoSpringJdbc implements CategoryDao {
     }
 
     @Override
+    public CategoryEntity update(CategoryEntity category) {
+        JdbcTemplate jdbcTemplate = new JdbcTemplate(DataSources.dataSource(CFG.spendJdbcUrl()));
+        KeyHolder kh = new GeneratedKeyHolder();
+        jdbcTemplate.update(
+                con -> {
+                    PreparedStatement ps = con.prepareStatement(
+                            "UPDATE category SET name = ?, archived = ? WHERE id = ?",
+                            Statement.RETURN_GENERATED_KEYS);
+                    ps.setString(1, category.getName());
+                    ps.setBoolean(2, category.isArchived());
+                    ps.setObject(3, category.getId());
+                    return ps;
+                }, kh
+        );
+        final UUID generatedKey = (UUID) kh.getKeys().get("id");
+        category.setId(generatedKey);
+        return category;
+    }
+
+    @Override
     public Optional<CategoryEntity> findCategoryById(UUID id) {
         JdbcTemplate jdbcTemplate = new JdbcTemplate(DataSources.dataSource(CFG.spendJdbcUrl()));
         return Optional.ofNullable(

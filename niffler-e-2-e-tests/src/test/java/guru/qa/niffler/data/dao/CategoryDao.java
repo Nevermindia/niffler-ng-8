@@ -9,9 +9,11 @@ import java.util.UUID;
 public interface CategoryDao {
     CategoryEntity create(CategoryEntity category);
 
+    public CategoryEntity update(CategoryEntity category);
+
     Optional<CategoryEntity> findCategoryById(UUID id);
 
-    Optional<CategoryEntity> findCategoryByUsernameAndCategoryName(String username, String categoryName);
+    public Optional<CategoryEntity> findCategoryByUsernameAndCategoryName(String username, String name);
 
     List<CategoryEntity> findAllByUsername(String username);
 

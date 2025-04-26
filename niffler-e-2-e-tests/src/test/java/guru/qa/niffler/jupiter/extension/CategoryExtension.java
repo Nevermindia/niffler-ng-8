@@ -3,7 +3,7 @@ package guru.qa.niffler.jupiter.extension;
 import guru.qa.niffler.api.SpendApiClient;
 import guru.qa.niffler.jupiter.annotation.meta.User;
 import guru.qa.niffler.model.CategoryJson;
-import guru.qa.niffler.service.SpendDbClient;
+import guru.qa.niffler.service.impl.SpendDbClient;
 import guru.qa.niffler.test.web.utils.RandomDataUtils;
 import org.apache.commons.lang3.ArrayUtils;
 import org.junit.jupiter.api.extension.*;
@@ -16,18 +16,18 @@ public class CategoryExtension implements BeforeEachCallback, ParameterResolver,
 
     @Override
     public void beforeEach(ExtensionContext context) throws Exception {
-        AnnotationSupport.findAnnotation(context.getRequiredTestMethod(), User.class)
-                .filter(anno -> ArrayUtils.isNotEmpty(anno.categories()))
-                .ifPresent(anno -> {
-                    CategoryJson categoryJson = new CategoryJson(
-                            null,
-                            RandomDataUtils.randomCategoryName(),
-                            anno.username(),
-                            anno.categories()[0].archived()
-                    );
-                    CategoryJson createdCategory = spendDbClient.createCategory(categoryJson);
-                    context.getStore(NAMESPACE).put(context.getUniqueId(), createdCategory);
-                });
+//        AnnotationSupport.findAnnotation(context.getRequiredTestMethod(), User.class)
+//                .filter(anno -> ArrayUtils.isNotEmpty(anno.categories()))
+//                .ifPresent(anno -> {
+//                    CategoryJson categoryJson = new CategoryJson(
+//                            null,
+//                            RandomDataUtils.randomCategoryName(),
+//                            anno.username(),
+//                            anno.categories()[0].archived()
+//                    );
+//                    CategoryJson createdCategory = spendDbClient.createCategory(categoryJson);
+//                    context.getStore(NAMESPACE).put(context.getUniqueId(), createdCategory);
+//                });
     }
 
     @Override
