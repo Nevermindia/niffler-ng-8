@@ -45,22 +45,13 @@ public class SpendDaoSpringJdbc implements SpendDao {
     @Override
     public SpendEntity update(SpendEntity spend) {
         JdbcTemplate jdbcTemplate = new JdbcTemplate(DataSources.dataSource(CFG.spendJdbcUrl()));
-        KeyHolder kh = new GeneratedKeyHolder();
-        jdbcTemplate.update(
-                con -> {
-                    PreparedStatement ps = con.prepareStatement(
-                            "UPDATE spend SET spend_date = ?, currency = ?, amount = ?, description = ? WHERE id = ?",
-                            Statement.RETURN_GENERATED_KEYS);
-                    ps.setDate(2, new java.sql.Date(spend.getSpendDate().getTime()));
-                    ps.setString(2, spend.getCurrency().name());
-                    ps.setDouble(3, spend.getAmount());
-                    ps.setString(4, spend.getDescription());
-                    ps.setObject(5, spend.getId());
-                    return ps;
-                }, kh
+        jdbcTemplate.update("UPDATE spend SET spend_date = ?, currency = ?, amount = ?, description = ? WHERE id = ?",
+                    new java.sql.Date(spend.getSpendDate().getTime()),
+                    spend.getCurrency().name(),
+                    spend.getAmount(),
+                    spend.getDescription(),
+                    spend.getId()
         );
-        final UUID generatedKey = (UUID) kh.getKeys().get("id");
-        spend.setId(generatedKey);
         return spend;
     }
 

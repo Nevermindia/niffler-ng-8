@@ -9,10 +9,6 @@ import guru.qa.niffler.data.repository.AuthUserRepository;
 import guru.qa.niffler.data.repository.UserDataRepository;
 import guru.qa.niffler.data.repository.impl.hibernate.AuthUserRepositoryHibernate;
 import guru.qa.niffler.data.repository.impl.hibernate.UserDataRepositoryHibernate;
-import guru.qa.niffler.data.repository.impl.jdbc.AuthUserRepositoryJdbc;
-import guru.qa.niffler.data.repository.impl.spring.AuthUserRepositorySpringJdbc;
-import guru.qa.niffler.data.repository.impl.jdbc.UserDataRepositoryJdbc;
-import guru.qa.niffler.data.repository.impl.spring.UserDataRepositorySpringJdbc;
 import guru.qa.niffler.data.tpl.XaTransactionTemplate;
 import guru.qa.niffler.model.CurrencyValues;
 import guru.qa.niffler.model.UserJson;
@@ -32,17 +28,8 @@ public class UsersDbClient implements UsersClient {
     private static final Config CFG = Config.getInstance();
     private static final PasswordEncoder pe = PasswordEncoderFactories.createDelegatingPasswordEncoder();
 
-    //repository jdbc
-    private final AuthUserRepository authUserRepositoryJdbc = new AuthUserRepositoryJdbc();
-    private final UserDataRepository userDataRepositoryJdbc = new UserDataRepositoryJdbc();
-
-    //repository spring jdbc
-    private final AuthUserRepository authUserSpringRepository = new AuthUserRepositorySpringJdbc();
-    private final UserDataRepository userDataSpringRepository = new UserDataRepositorySpringJdbc();
-
-    //repository hibernate
-    private final AuthUserRepository authUserHibernateRepository = new AuthUserRepositoryHibernate();
-    private final UserDataRepository userDataHibernateRepository = new UserDataRepositoryHibernate();
+    private final AuthUserRepository authUserRepository = new AuthUserRepositoryHibernate();
+    private final UserDataRepository userDataRepository = new UserDataRepositoryHibernate();
 
     private final XaTransactionTemplate xaTransactionTemplate = new XaTransactionTemplate(
             CFG.authJdbcUrl(), CFG.userdataJdbcUrl()
@@ -52,60 +39,46 @@ public class UsersDbClient implements UsersClient {
             new JdbcTransactionManager(dataSource(CFG.authJdbcUrl())));
 
 
-    //создание юзера с repository JDBC
-    public UserJson xaCreateUserRepository(UserJson user) {
+
+    public UserJson createUser(UserJson user) {
         return xaTransactionTemplate.execute(() -> {
             AuthUserEntity authUserEntity = authUserEntity(user);
-            authUserRepositoryJdbc.create(authUserEntity);
+            authUserRepository.create(authUserEntity);
             return UserJson.fromEntity(
-                    userDataRepositoryJdbc.create(UserEntity.fromJson(user)
+                    userDataRepository.create(UserEntity.fromJson(user)
                     ));
         });
     }
 
-    //создание юзера с repository Spring JDBC
-    public UserJson xaCreateUserSpringRepository(UserJson user) {
-        return xaTransactionTemplate.execute(() -> {
-            AuthUserEntity authUserEntity = authUserEntity(user);
-
-            authUserSpringRepository.create(authUserEntity);
-
-            return UserJson.fromEntity(
-                    userDataSpringRepository.create(UserEntity.fromJson(user)
-                    ));
-        });
-    }
-
-    //создание юзера с repository hibernate
-    public UserJson xaCreateUserHibernateRepository(String username, String password) {
+    public UserJson createUser(String username, String password) {
         return xaTransactionTemplate.execute(() -> {
             AuthUserEntity authUserEntity = authUserEntity(username, password);
 
-            authUserHibernateRepository.create(authUserEntity);
+            authUserRepository.create(authUserEntity);
 
             return UserJson.fromEntity(
-                    userDataHibernateRepository.create(userEntity(username)
+                    userDataRepository.create(userEntity(username)
                     ));
         });
     }
 
     public void addFriend(UserJson user, UserJson friend) {
         xaTransactionTemplate.execute(() -> {
-            userDataHibernateRepository.addFriend(UserEntity.fromJson(user), UserEntity.fromJson(friend));
+            userDataRepository.addFriend(UserEntity.fromJson(user), UserEntity.fromJson(friend));
             return null;
         });
     }
 
     public void addIncomeInvitation(UserJson targertUser, int count) {
         if (count > 0) {
-            UserEntity targetEntity = userDataHibernateRepository.findById(targertUser.id()).orElseThrow();
+            UserEntity targetEntity = userDataRepository.findById(targertUser.id()).orElseThrow();
             for (int i = 0; i < count; i++) {
                 xaTransactionTemplate.execute(() -> {
                     String username = randomUsername();
                     AuthUserEntity authUser = authUserEntity(username, "12345");
-                    authUserHibernateRepository.create(authUser);
-                    UserEntity adressee = userDataHibernateRepository.create(userEntity(username));
-                    userDataHibernateRepository.addIncomeRequest(targetEntity, adressee);
+                    authUserRepository.create(authUser);
+                    UserEntity adressee = userDataRepository.create(userEntity(username));
+                    userDataRepository.addIncomeRequest(targetEntity, adressee);
                     return null;
                 });
             }
@@ -114,14 +87,14 @@ public class UsersDbClient implements UsersClient {
 
     public void addOutcomeInvitation(UserJson targetUser, int count) {
         if (count > 0) {
-            UserEntity targetEntity = userDataHibernateRepository.findById(targetUser.id()).orElseThrow();
+            UserEntity targetEntity = userDataRepository.findById(targetUser.id()).orElseThrow();
             for (int i = 0; i < count; i++) {
                 xaTransactionTemplate.execute(() -> {
                             String username = randomUsername();
                             AuthUserEntity authUser = authUserEntity(username, "12345");
-                            authUserHibernateRepository.create(authUser);
-                            UserEntity adressee = userDataHibernateRepository.create(userEntity(username));
-                            userDataHibernateRepository.addOutcomeRequest(targetEntity, adressee);
+                            authUserRepository.create(authUser);
+                            UserEntity adressee = userDataRepository.create(userEntity(username));
+                            userDataRepository.addOutcomeRequest(targetEntity, adressee);
                             return null;
                         }
                 );

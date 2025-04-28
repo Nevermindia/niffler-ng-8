@@ -1,18 +1,9 @@
 package guru.qa.niffler.test.web;
 
 import guru.qa.niffler.data.entity.spend.SpendEntity;
-import guru.qa.niffler.data.entity.userAuth.AuthUserEntity;
-import guru.qa.niffler.data.repository.AuthUserRepository;
-import guru.qa.niffler.data.repository.SpendRepository;
-import guru.qa.niffler.data.repository.UserDataRepository;
-import guru.qa.niffler.data.repository.impl.hibernate.AuthUserRepositoryHibernate;
-import guru.qa.niffler.data.repository.impl.hibernate.SpendRepositoryHibernate;
-import guru.qa.niffler.data.repository.impl.hibernate.UserDataRepositoryHibernate;
-import guru.qa.niffler.data.repository.impl.jdbc.AuthUserRepositoryJdbc;
 import guru.qa.niffler.data.repository.impl.jdbc.SpendRepositoryJdbc;
 import guru.qa.niffler.data.repository.impl.spring.SpendRepositorySpringJdbc;
 import guru.qa.niffler.model.*;
-import guru.qa.niffler.service.SpendClient;
 import guru.qa.niffler.service.impl.SpendDbClient;
 import guru.qa.niffler.service.impl.UsersDbClient;
 import org.junit.jupiter.api.Test;
@@ -21,7 +12,6 @@ import org.junit.jupiter.params.provider.ValueSource;
 
 import java.util.Date;
 import java.util.Optional;
-import java.util.UUID;
 
 
 public class JdbcTest {
@@ -30,7 +20,7 @@ public class JdbcTest {
     @Test
     void daoTest() {
         SpendDbClient spendDbClient = new SpendDbClient();
-        SpendJson spend = spendDbClient.createSpendJdbc(
+        SpendJson spend = spendDbClient.createSpend(
                 new SpendJson(
                         null,
                         new Date(),
@@ -53,7 +43,7 @@ public class JdbcTest {
     void txTest() {
         SpendDbClient spendDbClient = new SpendDbClient();
 
-        SpendJson spend = spendDbClient.createSpendJdbc(
+        SpendJson spend = spendDbClient.createSpend(
                 new SpendJson(
                         null,
                         new Date(),
@@ -75,7 +65,7 @@ public class JdbcTest {
     @Test
     void createSpendJdbcTest() {
         SpendDbClient spendDbClient = new SpendDbClient();
-        SpendJson spendJson = spendDbClient.createSpendSpring(
+        SpendJson spendJson = spendDbClient.createSpend(
                 new SpendJson(
                         null,
                         new Date(),
@@ -224,7 +214,7 @@ public class JdbcTest {
     @Test
     void createUserWithRepositoryTest() {
         UsersDbClient authUsersDbClient = new UsersDbClient();
-        UserJson user = authUsersDbClient.xaCreateUserRepository(
+        UserJson user = authUsersDbClient.createUser(
                 new UserJson(
                         null,
                         "xaCreateUserRepository1",
@@ -245,7 +235,7 @@ public class JdbcTest {
     @Test
     void createUserWithFriendWithRepositoryTest() {
         UsersDbClient usersDbClient = new UsersDbClient();
-        UserJson user1 = usersDbClient.xaCreateUserRepository(
+        UserJson user1 = usersDbClient.createUser(
                 new UserJson(
                         null,
                         "Biba",
@@ -258,7 +248,7 @@ public class JdbcTest {
                 )
         );
 
-        UserJson user2 = usersDbClient.xaCreateUserRepository(
+        UserJson user2 = usersDbClient.createUser(
                 new UserJson(
                         null,
                         "Boba",
@@ -280,7 +270,7 @@ public class JdbcTest {
     void createUserWithRequestWithRepositoryTest() {
         UsersDbClient usersDbClient = new UsersDbClient();
         //у пользователя Addressee будет входящий запрос на дружбу
-        UserJson addressee = usersDbClient.xaCreateUserRepository(
+        UserJson addressee = usersDbClient.createUser(
                 new UserJson(
                         null,
                         "Addressee",
@@ -293,7 +283,7 @@ public class JdbcTest {
                 )
         );
         //у пользователя Requester будет исходящий запрос
-        UserJson requester = usersDbClient.xaCreateUserRepository(
+        UserJson requester = usersDbClient.createUser(
                 new UserJson(
                         null,
                         "Requester",
@@ -314,7 +304,7 @@ public class JdbcTest {
     @Test
     void createUserWithSpringRepositoryTest() {
         UsersDbClient authUsersDbClient = new UsersDbClient();
-        UserJson user = authUsersDbClient.xaCreateUserSpringRepository(
+        UserJson user = authUsersDbClient.createUser(
                 new UserJson(
                         null,
                         "xaCreateUserSpringRepository",
@@ -385,13 +375,13 @@ public class JdbcTest {
     проверка метода xaCreateUserHibernateRepository
      */
     @ValueSource(strings = {
-            "xaCreateUserHibernateRepository12",
+            "xaCreateUserHibernateRepository13",
     })
     @ParameterizedTest
     void xaCreateUserHibernateRepository(String username) {
         UsersDbClient usersDbClient = new UsersDbClient();
 
-        UserJson user = usersDbClient.xaCreateUserHibernateRepository(
+        UserJson user = usersDbClient.createUser(
                 username, "12345"
         );
         usersDbClient.addIncomeInvitation(user, 1);
