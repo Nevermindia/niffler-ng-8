@@ -11,15 +11,15 @@ import jakarta.persistence.NoResultException;
 import java.util.Optional;
 import java.util.UUID;
 
-public class UserDataUserRepositoryHibernate implements UserDataRepository {
+public class UserDataRepositoryHibernate implements UserDataRepository {
     private final Config CFG = Config.getInstance();
     private final EntityManager entityManager = EntityManagers.em(CFG.userdataJdbcUrl());
 
     @Override
-    public UserEntity createUser(UserEntity user) {
+    public UserEntity create(UserEntity user) {
         entityManager.joinTransaction();
         entityManager.persist(user);
-       return user;
+        return user;
     }
 
     @Override
@@ -33,11 +33,16 @@ public class UserDataUserRepositoryHibernate implements UserDataRepository {
             return Optional.of(entityManager.createQuery("select u from UserEntity u where u.username =: username", UserEntity.class)
                     .setParameter("username", username)
                     .getSingleResult());
-        } catch (NoResultException e){
+        } catch (NoResultException e) {
             return Optional.empty();
         }
+    }
 
-
+    @Override
+    public UserEntity update(UserEntity user) {
+        entityManager.joinTransaction();
+        entityManager.merge(user);
+        return user;
     }
 
     @Override
@@ -53,13 +58,17 @@ public class UserDataUserRepositoryHibernate implements UserDataRepository {
     public void addOutcomeRequest(UserEntity requester, UserEntity addressee) {
         entityManager.joinTransaction();
         requester.addFriends(FriendshipStatus.PENDING, addressee);
-
     }
 
     @Override
     public void addIncomeRequest(UserEntity requester, UserEntity addressee) {
         entityManager.joinTransaction();
         addressee.addFriends(FriendshipStatus.PENDING, requester);
+    }
 
+    @Override
+    public void remove(UserEntity user) {
+        entityManager.joinTransaction();
+        entityManager.remove(user);
     }
 }

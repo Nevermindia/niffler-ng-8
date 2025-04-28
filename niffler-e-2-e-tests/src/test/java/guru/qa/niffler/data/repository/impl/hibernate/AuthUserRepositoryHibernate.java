@@ -15,10 +15,17 @@ public class AuthUserRepositoryHibernate implements AuthUserRepository {
     private final EntityManager entityManager = EntityManagers.em(CFG.authJdbcUrl());
 
     @Override
-    public AuthUserEntity createUser(AuthUserEntity user) {
+    public AuthUserEntity create(AuthUserEntity user) {
         entityManager.joinTransaction();
         entityManager.persist(user);
-       return user;
+        return user;
+    }
+
+    @Override
+    public AuthUserEntity update(AuthUserEntity user) {
+        entityManager.joinTransaction();
+        entityManager.merge(user);
+        return user;
     }
 
     @Override
@@ -29,13 +36,17 @@ public class AuthUserRepositoryHibernate implements AuthUserRepository {
     @Override
     public Optional<AuthUserEntity> findByUsername(String username) {
         try {
-            return Optional.of(entityManager.createQuery("select u from UserEntity u where u.username =: username", AuthUserEntity.class)
+            return Optional.of(entityManager.createQuery("select u from AuthUserEntity u where u.username =: username", AuthUserEntity.class)
                     .setParameter("username", username)
                     .getSingleResult());
-        } catch (NoResultException e){
+        } catch (NoResultException e) {
             return Optional.empty();
         }
+    }
 
-
+    @Override
+    public void remove(AuthUserEntity user) {
+        entityManager.joinTransaction();
+        entityManager.remove(user);
     }
 }

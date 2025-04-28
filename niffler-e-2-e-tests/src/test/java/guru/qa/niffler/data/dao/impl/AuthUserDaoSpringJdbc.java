@@ -53,6 +53,7 @@ public class AuthUserDaoSpringJdbc implements AuthUserDao {
                 )
         );
     }
+
     @Override
     public List<AuthUserEntity> findAll() {
         JdbcTemplate jdbcTemplate = new JdbcTemplate(DataSources.dataSource(CFG.authJdbcUrl()));
@@ -60,6 +61,12 @@ public class AuthUserDaoSpringJdbc implements AuthUserDao {
                 "SELECT * FROM \"user\"",
                 AuthUserEntityRowMapper.instance
         );
+    }
+
+    @Override
+    public void delete(UUID id) {
+        JdbcTemplate jdbcTemplate = new JdbcTemplate(DataSources.dataSource(CFG.authJdbcUrl()));
+        jdbcTemplate.update("DELETE FROM \"user\" WHERE id = ?", id);
     }
 
     @Override
