@@ -46,7 +46,7 @@ public class UsersDbClient implements UsersClient {
             authUserRepository.create(authUserEntity);
             return UserJson.fromEntity(
                     userDataRepository.create(UserEntity.fromJson(user)
-                    ));
+                    ), user.friendshipStatus());
         });
     }
 
@@ -58,7 +58,7 @@ public class UsersDbClient implements UsersClient {
 
             return UserJson.fromEntity(
                     userDataRepository.create(userEntity(username)
-                    ));
+                    ), null);
         });
     }
 

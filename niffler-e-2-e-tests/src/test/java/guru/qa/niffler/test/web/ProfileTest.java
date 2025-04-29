@@ -6,6 +6,7 @@ import guru.qa.niffler.jupiter.annotation.Category;
 import guru.qa.niffler.jupiter.annotation.meta.User;
 import guru.qa.niffler.jupiter.annotation.meta.WebTest;
 import guru.qa.niffler.model.CategoryJson;
+import guru.qa.niffler.model.UserJson;
 import guru.qa.niffler.page.LoginPage;
 import org.junit.jupiter.api.Test;
 
@@ -16,19 +17,19 @@ public class ProfileTest {
     String password = "nevermindia";
 
     @User(
-            username = "nevermindia",
             categories = @Category(
                     archived = true
             )
     )
     @Test
-    void archivedCategoryShouldPresentInCategoriesList(CategoryJson category) {
+    void archivedCategoryShouldPresentInCategoriesList(UserJson user) {
+        final CategoryJson archivedCategory = user.testData().categories().getFirst();
         Selenide.open(LoginPage.URL, LoginPage.class)
-                .doLogin(username, password)
+                .doLogin(user.username(), user.testData().password())
                 .checkMainPageIsOpened()
                 .goToProfile()
                 .clickOnArchivedCategorySwitch()
-                .checkCategoryExists(category.name());
+                .checkCategoryExists(archivedCategory.name());
     }
 
     @User(
@@ -38,11 +39,11 @@ public class ProfileTest {
             )
     )
     @Test
-    void activeCategoryShouldPresentInCategoriesList(CategoryJson category) {
+    void activeCategoryShouldPresentInCategoriesList(CategoryJson[] category) {
         Selenide.open(LoginPage.URL, LoginPage.class)
                 .doLogin(username, password)
                 .checkMainPageIsOpened()
                 .goToProfile()
-                .checkCategoryExists(category.name());
+                .checkCategoryExists(category[0].name());
     }
 }
