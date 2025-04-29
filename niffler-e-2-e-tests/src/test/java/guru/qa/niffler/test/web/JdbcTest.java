@@ -223,6 +223,8 @@ public class JdbcTest {
                         null,
                         CurrencyValues.RUB,
                         null,
+                        null,
+                        null,
                         null
                 )
         );
@@ -244,6 +246,8 @@ public class JdbcTest {
                         null,
                         CurrencyValues.RUB,
                         null,
+                        null,
+                        null,
                         null
                 )
         );
@@ -256,6 +260,8 @@ public class JdbcTest {
                         null,
                         null,
                         CurrencyValues.RUB,
+                        null,
+                        null,
                         null,
                         null
                 )
@@ -279,7 +285,7 @@ public class JdbcTest {
                         null,
                         CurrencyValues.RUB,
                         null,
-                        null
+                        null, null, null
                 )
         );
         //у пользователя Requester будет исходящий запрос
@@ -292,7 +298,7 @@ public class JdbcTest {
                         null,
                         CurrencyValues.RUB,
                         null,
-                        null
+                        null, null, null
                 )
         );
         usersDbClient.addOutcomeInvitation(requester, 1);
@@ -313,7 +319,7 @@ public class JdbcTest {
                         null,
                         CurrencyValues.RUB,
                         null,
-                        null
+                        null, null, null
                 )
         );
         System.out.println(user);
