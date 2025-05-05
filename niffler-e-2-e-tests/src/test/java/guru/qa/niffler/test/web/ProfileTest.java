@@ -12,9 +12,6 @@ import org.junit.jupiter.api.Test;
 
 @WebTest
 public class ProfileTest {
-    private static final Config CFG = Config.getInstance();
-    String username = "nevermindia";
-    String password = "nevermindia";
 
     @User(
             categories = @Category(
@@ -33,17 +30,14 @@ public class ProfileTest {
     }
 
     @User(
-            username = "nevermindia",
-            categories = @Category(
-                    archived = false
-            )
+            categories = @Category()
     )
     @Test
-    void activeCategoryShouldPresentInCategoriesList(CategoryJson[] category) {
+    void activeCategoryShouldPresentInCategoriesList(UserJson user) {
         Selenide.open(LoginPage.URL, LoginPage.class)
-                .doLogin(username, password)
+                .doLogin(user.username(), user.testData().password())
                 .checkMainPageIsOpened()
                 .goToProfile()
-                .checkCategoryExists(category[0].name());
+                .checkCategoryExists(user.testData().categories().getFirst().name());
     }
 }

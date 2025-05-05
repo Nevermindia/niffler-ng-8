@@ -3,6 +3,7 @@ package guru.qa.niffler.page;
 import com.codeborne.selenide.ElementsCollection;
 import com.codeborne.selenide.SelenideElement;
 import io.qameta.allure.Step;
+import org.openqa.selenium.Keys;
 
 import static com.codeborne.selenide.Condition.text;
 import static com.codeborne.selenide.Condition.visible;
@@ -15,6 +16,7 @@ public class MainPage {
     private final ElementsCollection headerElements = $$(".MuiTypography-h5");
     private final SelenideElement contextMenuInAvatarBtn = $("button[aria-label='Menu']");
     private final ElementsCollection contextMenuElements = $$(".MuiList-padding li");
+    private final SelenideElement searchField = $("input[type='text']");
 
     public EditSpendingPage editSpending(String spendingDescription) {
         tableRows.find(text(spendingDescription))
@@ -58,5 +60,11 @@ public class MainPage {
         contextMenuInAvatarBtn.click();
         contextMenuElements.find(text("All People")).click();
         return new AllPeoplePage();
+    }
+
+    public MainPage search(String spend) {
+        searchField.sendKeys(spend);
+        searchField.sendKeys(Keys.ENTER);
+        return this;
     }
 }

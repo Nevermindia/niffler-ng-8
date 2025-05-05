@@ -266,7 +266,7 @@ public class JdbcTest {
                         null
                 )
         );
-        usersDbClient.addFriend(user1, user2);
+        //usersDbClient.addFriend(user1, user2);
     }
 
     /*

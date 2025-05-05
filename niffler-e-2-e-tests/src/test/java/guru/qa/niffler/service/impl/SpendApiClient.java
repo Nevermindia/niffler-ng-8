@@ -1,9 +1,12 @@
-package guru.qa.niffler.api;
+package guru.qa.niffler.service.impl;
 
+
+import guru.qa.niffler.api.SpendApi;
 import guru.qa.niffler.config.Config;
 import guru.qa.niffler.model.CategoryJson;
 import guru.qa.niffler.model.CurrencyValues;
 import guru.qa.niffler.model.SpendJson;
+import guru.qa.niffler.service.SpendClient;
 import okhttp3.OkHttpClient;
 import retrofit2.Response;
 import retrofit2.Retrofit;
@@ -14,7 +17,7 @@ import java.util.List;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
-public class SpendApiClient {
+public class SpendApiClient implements SpendClient {
 
     private static final Config CFG = Config.getInstance();
 
@@ -27,7 +30,8 @@ public class SpendApiClient {
 
     private final SpendApi spendApi = retrofit.create(SpendApi.class);
 
-    public SpendJson addSpend(SpendJson spend) {
+    @Override
+    public SpendJson createSpend(SpendJson spend) {
         final Response<SpendJson> response;
         try {
             response = spendApi.addSpend(spend)
@@ -86,7 +90,8 @@ public class SpendApiClient {
         assertEquals(200, response.code());
     }
 
-    public CategoryJson addCategory(CategoryJson category) {
+    @Override
+    public CategoryJson createCategory(CategoryJson category) {
         final Response<CategoryJson> response;
         try {
             response = spendApi.addCategory(category)
