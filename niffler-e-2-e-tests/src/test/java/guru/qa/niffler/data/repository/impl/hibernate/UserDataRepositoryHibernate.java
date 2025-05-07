@@ -48,10 +48,8 @@ public class UserDataRepositoryHibernate implements UserDataRepository {
     @Override
     public void addFriend(UserEntity requester, UserEntity addressee) {
         entityManager.joinTransaction();
-        requester.addFriends(FriendshipStatus.ACCEPTED);
-        addressee.addFriends(FriendshipStatus.ACCEPTED);
-
-
+        requester.addFriends(FriendshipStatus.ACCEPTED, addressee);
+        addressee.addFriends(FriendshipStatus.ACCEPTED, requester);
     }
 
     @Override

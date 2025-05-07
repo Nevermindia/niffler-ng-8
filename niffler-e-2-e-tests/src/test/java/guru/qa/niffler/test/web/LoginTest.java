@@ -1,30 +1,32 @@
 package guru.qa.niffler.test.web;
 
 import com.codeborne.selenide.Selenide;
+import guru.qa.niffler.jupiter.annotation.meta.User;
 import guru.qa.niffler.jupiter.annotation.meta.WebTest;
 import guru.qa.niffler.jupiter.extension.TestMethodContextExtension;
+import guru.qa.niffler.model.UserJson;
 import guru.qa.niffler.page.LoginPage;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtensionContext;
 
+
 @WebTest
 public class LoginTest {
-    String username = "nevermindia";
-    String correctPassword = "nevermindia";
 
+    @User()
     @Test
-    void mainPageShouldBeDisplayedAfterSuccessLogin() {
+    void mainPageShouldBeDisplayedAfterSuccessLogin(UserJson user) {
         ExtensionContext ctx = TestMethodContextExtension.context();
         Selenide.open(LoginPage.URL, LoginPage.class)
-                .doLogin(username, correctPassword)
+                .doLogin(user.username(), user.testData().password())
                 .checkMainPageIsOpened();
     }
-
+    @User()
     @Test
-    void userShouldStayOnLoginPageAfterLoginWithBadCredentials() {
+    void userShouldStayOnLoginPageAfterLoginWithBadCredentials(UserJson user) {
         Selenide.open(LoginPage.URL, LoginPage.class)
-                .setUsername(username)
-                .setPassword(correctPassword + "12")
+                .setUsername(user.username())
+                .setPassword(user.testData().password() + "12")
                 .clickLoginBtn()
                 .checkError("Неверные учетные данные пользователя");
     }

@@ -28,7 +28,7 @@ public class SpendingExtension implements BeforeEachCallback, ParameterResolver 
     public void beforeEach(ExtensionContext context) {
         AnnotationSupport.findAnnotation(context.getRequiredTestMethod(), User.class)
                 .ifPresent(anno -> {
-                    if (ArrayUtils.isNotEmpty(anno.categories())) {
+                    if (ArrayUtils.isNotEmpty(anno.spendings())) {
                         UserJson createdUser = UserExtension.createdUser();
                         final String username = createdUser != null
                                 ? createdUser.username()
@@ -40,13 +40,13 @@ public class SpendingExtension implements BeforeEachCallback, ParameterResolver 
                                     new Date(),
                                     new CategoryJson(
                                             null,
-                                            anno.spendings()[0].category(),
+                                            spendAnno.category(),
                                             username,
                                             false
                                     ),
-                                    anno.spendings()[0].currency(),
-                                    anno.spendings()[0].amount(),
-                                    anno.spendings()[0].description(),
+                                    spendAnno.currency(),
+                                    spendAnno.amount(),
+                                    spendAnno.description(),
                                     username
                             );
                             createdSpendings.add(spendClient.createSpend(spendJson));
