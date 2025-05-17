@@ -1,6 +1,7 @@
 package guru.qa.niffler.test.web;
 
 import com.codeborne.selenide.Selenide;
+import guru.qa.niffler.condition.Color;
 import guru.qa.niffler.config.Config;
 import guru.qa.niffler.jupiter.annotation.Category;
 import guru.qa.niffler.jupiter.annotation.ScreenShotTest;
@@ -12,6 +13,7 @@ import guru.qa.niffler.model.UserJson;
 import guru.qa.niffler.page.LoginPage;
 import org.junit.jupiter.api.Test;
 
+import java.awt.*;
 import java.awt.image.BufferedImage;
 import java.io.IOException;
 import java.util.List;
@@ -48,10 +50,11 @@ public class SpendingTest {
                     currency = CurrencyValues.RUB
             ))
     @ScreenShotTest(value = "img/expected-stat.png")
-    void checkStatComponentTest(UserJson user, BufferedImage expected) throws IOException {
+    void checkStatComponentTest(UserJson user, BufferedImage expected) {
         Selenide.open(CFG.frontUrl(), LoginPage.class)
                 .doLogin(user.username(), user.testData().password())
                 .checkStatisticDiagramInfo(List.of("Еда 1250 ₽"))
+                .checkBubbles(Color.yellow)
                 .checkStatisticDiagram(expected);
     }
 
