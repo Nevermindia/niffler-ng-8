@@ -8,8 +8,6 @@ import guru.qa.niffler.test.web.utils.ScreenDiffResult;
 import io.qameta.allure.Step;
 import lombok.SneakyThrows;
 import org.openqa.selenium.Keys;
-import org.openqa.selenium.WebElement;
-import ru.yandex.qatools.ashot.AShot;
 
 import javax.imageio.ImageIO;
 import java.awt.image.BufferedImage;
@@ -34,6 +32,7 @@ public class MainPage {
     private final ElementsCollection statisticCells = $$("#legend-container li");
     private final SelenideElement deleteBtn = $("#delete");
     private final SelenideElement dialogWindow = $("div[role='dialog']");
+
 
     @Step("Edit spending with description {0}")
     public EditSpendingPage editSpending(String spendingDescription) {
