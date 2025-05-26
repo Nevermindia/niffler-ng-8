@@ -14,10 +14,6 @@ public class BrowserConverterUtils implements ArgumentConverter {
         if (!(source instanceof Browser)){
             throw new ArgumentConversionException("Source must be instance of enum Browser");
         }
-        return switch (source) {
-            case CHROME -> new SelenideDriver(SelenideUtils.chromeConfig);
-            case FIREFOX -> new SelenideDriver(SelenideUtils.firefoxConfig);
-            default -> throw new ArgumentConversionException("Unsupported browser type: " + source);
-        };
+        return ((Browser) source).createDriver();
     }
 }

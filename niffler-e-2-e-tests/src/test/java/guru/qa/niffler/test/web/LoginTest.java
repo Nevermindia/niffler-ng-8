@@ -1,6 +1,5 @@
 package guru.qa.niffler.test.web;
 
-import com.codeborne.selenide.Condition;
 import com.codeborne.selenide.SelenideDriver;
 import guru.qa.niffler.jupiter.annotation.meta.User;
 import guru.qa.niffler.jupiter.annotation.meta.WebTest;
@@ -45,8 +44,7 @@ public class LoginTest {
         new LoginPage(driver).setUsername(RandomDataUtils.randomUsername())
                 .setPassword("12345")
                 .clickLoginBtn()
-                .checkError("Неверные учетные данные пользователя");
-
-        driver.$(".logo-section__text").shouldHave(Condition.text("Niffler"));
+                .checkError("Неверные учетные данные пользователя")
+                .checkLogoText();
     }
 }
