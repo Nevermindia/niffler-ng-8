@@ -7,6 +7,7 @@ import guru.qa.niffler.model.CategoryJson;
 import guru.qa.niffler.model.CurrencyValues;
 import guru.qa.niffler.model.SpendJson;
 import guru.qa.niffler.service.SpendClient;
+import io.qameta.allure.Step;
 import io.qameta.allure.okhttp3.AllureOkHttp3;
 import okhttp3.OkHttpClient;
 import retrofit2.Response;
@@ -40,8 +41,10 @@ public class SpendApiClient implements SpendClient {
 
     private final SpendApi spendApi = retrofit.create(SpendApi.class);
 
+    @Step("Create spend using REST API")
+    @Nonnull
     @Override
-    public @Nullable SpendJson createSpend(SpendJson spend) {
+    public SpendJson createSpend(SpendJson spend) {
         final Response<SpendJson> response;
         try {
             response = spendApi.addSpend(spend)
@@ -53,7 +56,9 @@ public class SpendApiClient implements SpendClient {
         return response.body();
     }
 
-    public @Nullable SpendJson editSpend(SpendJson spend) {
+    @Step("Edit spend using REST API")
+    @Nonnull
+    public SpendJson editSpend(SpendJson spend) {
         final Response<SpendJson> response;
         try {
             response = spendApi.editSpend(spend)
@@ -65,7 +70,9 @@ public class SpendApiClient implements SpendClient {
         return response.body();
     }
 
-    public @Nullable SpendJson getSpendById(String id) {
+    @Step("Get spend by id using REST API")
+    @Nonnull
+    public SpendJson getSpendById(String id) {
         final Response<SpendJson> response;
         try {
             response = spendApi.getSpendById(id)
@@ -77,7 +84,9 @@ public class SpendApiClient implements SpendClient {
         return response.body();
     }
 
-    public @Nonnull List<SpendJson> getAllSpends(String filterPeriod,
+    @Step("Get all spends using REST API")
+    @Nonnull
+    public List<SpendJson> getAllSpends(String filterPeriod,
                                   @Nullable CurrencyValues filterCurrency) {
         final Response<List<SpendJson>> response;
         try {
@@ -92,6 +101,7 @@ public class SpendApiClient implements SpendClient {
                 : Collections.emptyList();
     }
 
+    @Step("Remove spends by ids using REST API")
     public void removeSpend(List<String> ids) {
         final Response<Void> response;
         try {
@@ -103,8 +113,10 @@ public class SpendApiClient implements SpendClient {
         assertEquals(200, response.code());
     }
 
+    @Step("Create category using REST API")
+    @Nonnull
     @Override
-    public @Nullable CategoryJson createCategory(CategoryJson category) {
+    public CategoryJson createCategory(CategoryJson category) {
         final Response<CategoryJson> response;
         try {
             response = spendApi.addCategory(category)
@@ -116,7 +128,9 @@ public class SpendApiClient implements SpendClient {
         return response.body();
     }
 
-    public @Nullable CategoryJson updateCategory(CategoryJson category) {
+    @Step("Update category by id using REST API")
+    @Nonnull
+    public CategoryJson updateCategory(CategoryJson category) {
         final Response<CategoryJson> response;
         try {
             response = spendApi.updateCategory(category)
@@ -128,7 +142,9 @@ public class SpendApiClient implements SpendClient {
         return response.body();
     }
 
-    public @Nonnull List<CategoryJson> getAllCategories(Boolean excludeArchived) {
+    @Step("Get all categories using REST API")
+    @Nonnull
+    public List<CategoryJson> getAllCategories(Boolean excludeArchived) {
         final Response<List<CategoryJson>> response;
         try {
             response = spendApi.getAllCategories(excludeArchived)

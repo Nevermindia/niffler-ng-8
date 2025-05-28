@@ -11,11 +11,14 @@ import retrofit2.Response;
 import retrofit2.Retrofit;
 import retrofit2.converter.jackson.JacksonConverterFactory;
 
+import javax.annotation.Nonnull;
+import javax.annotation.ParametersAreNonnullByDefault;
 import java.io.IOException;
 
 import static guru.qa.niffler.test.web.utils.RandomDataUtils.randomUsername;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
+@ParametersAreNonnullByDefault
 public class UsersApiClient implements UsersClient {
     private static final Config CFG = Config.getInstance();
 
@@ -31,18 +34,22 @@ public class UsersApiClient implements UsersClient {
             .build();
 
     private final UsersApi usersApi = retrofit.create(UsersApi.class);
+
+    @Nonnull
     @Override
     @Step("Create user using API")
     public UserJson createUser(UserJson user) {
         throw new UnsupportedOperationException("Method not implemented yet");
     }
 
+    @Nonnull
     @Override
     @Step("Create user using API")
     public UserJson createUser(String username, String password) {
         throw new UnsupportedOperationException("Method not implemented yet");
     }
 
+    @Step("Add friend using API")
     @Override
     public void addFriend(UserJson user, int count) {
         if (count > 0) {
@@ -65,6 +72,7 @@ public class UsersApiClient implements UsersClient {
 
     }
 
+    @Step("Add income invitation using API")
     @Override
     public void addIncomeInvitation(UserJson targetUser, int count) {
         if (count > 0) {
@@ -86,6 +94,7 @@ public class UsersApiClient implements UsersClient {
         }
     }
 
+    @Step("Add outcome invitation using API")
     @Override
     public void addOutcomeInvitation(UserJson targetUser, int count) {
         if (count > 0) {

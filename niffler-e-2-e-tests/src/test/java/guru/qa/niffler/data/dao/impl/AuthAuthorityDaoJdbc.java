@@ -4,10 +4,12 @@ import guru.qa.niffler.config.Config;
 import guru.qa.niffler.data.dao.AuthAuthorityDao;
 import guru.qa.niffler.data.entity.userAuth.AuthorityEntity;
 
+import javax.annotation.ParametersAreNonnullByDefault;
 import java.sql.*;
 
 import static guru.qa.niffler.data.tpl.Connections.holder;
 
+@ParametersAreNonnullByDefault
 public class AuthAuthorityDaoJdbc implements AuthAuthorityDao {
     private static final Config CFG = Config.getInstance();
 

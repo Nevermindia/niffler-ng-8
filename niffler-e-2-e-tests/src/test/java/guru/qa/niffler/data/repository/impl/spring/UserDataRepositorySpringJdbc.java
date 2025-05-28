@@ -10,6 +10,7 @@ import org.springframework.jdbc.core.BatchPreparedStatementSetter;
 import org.springframework.jdbc.core.JdbcTemplate;
 
 import javax.annotation.Nonnull;
+import javax.annotation.ParametersAreNonnullByDefault;
 import java.sql.PreparedStatement;
 import java.sql.SQLException;
 import java.util.List;
@@ -20,25 +21,30 @@ import static guru.qa.niffler.data.entity.userdata.FriendshipStatus.ACCEPTED;
 import static guru.qa.niffler.data.entity.userdata.FriendshipStatus.PENDING;
 import static guru.qa.niffler.data.tpl.Connections.holder;
 
+@ParametersAreNonnullByDefault
 public class UserDataRepositorySpringJdbc implements UserDataRepository {
     private static final Config CFG = Config.getInstance();
     private final UserDao userDao = new UserDaoSpringJdbc();
 
+    @Nonnull
     @Override
     public UserEntity create(UserEntity user) {
         return userDao.createUser(user);
     }
 
+    @Nonnull
     @Override
     public Optional<UserEntity> findById(UUID id) {
         return userDao.findById(id);
     }
 
+    @Nonnull
     @Override
     public Optional<UserEntity> findByUsername(String username) {
         return userDao.findByUsername(username);
     }
 
+    @Nonnull
     @Override
     public UserEntity update(UserEntity user) {
         JdbcTemplate jdbcTemplate = new JdbcTemplate(DataSources.dataSource(CFG.userdataJdbcUrl()));

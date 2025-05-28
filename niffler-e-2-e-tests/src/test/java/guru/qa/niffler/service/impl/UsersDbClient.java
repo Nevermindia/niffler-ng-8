@@ -21,12 +21,14 @@ import org.springframework.security.crypto.factory.PasswordEncoderFactories;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.transaction.support.TransactionTemplate;
 
+import javax.annotation.ParametersAreNonnullByDefault;
 import java.util.Arrays;
 
 import static guru.qa.niffler.data.tpl.DataSources.dataSource;
 import static guru.qa.niffler.model.UserJson.fromEntity;
 import static guru.qa.niffler.test.web.utils.RandomDataUtils.randomUsername;
 
+@ParametersAreNonnullByDefault
 public class UsersDbClient implements UsersClient {
     private static final Config CFG = Config.getInstance();
     private static final PasswordEncoder pe = PasswordEncoderFactories.createDelegatingPasswordEncoder();

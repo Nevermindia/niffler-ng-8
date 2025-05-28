@@ -1,5 +1,6 @@
 package guru.qa.niffler.test.web;
 
+import com.codeborne.selenide.Selenide;
 import com.codeborne.selenide.SelenideDriver;
 import guru.qa.niffler.jupiter.annotation.meta.User;
 import guru.qa.niffler.jupiter.annotation.meta.WebTest;
@@ -28,9 +29,8 @@ public class LoginTest {
     @User
     @Test
     void mainPageShouldBeDisplayedAfterSuccessLogin(UserJson user) {
-        browserExtension.drivers().add(chrome);
-        chrome.open(LoginPage.URL);
-        new LoginPage(chrome).doLogin(user.username(), user.testData().password())
+        Selenide.open(LoginPage.URL, LoginPage.class)
+                .doLogin(user.username(), user.testData().password())
                 .checkMainPageIsOpened();
     }
 

@@ -11,6 +11,8 @@ import guru.qa.niffler.data.repository.AuthUserRepository;
 import org.springframework.security.crypto.factory.PasswordEncoderFactories;
 import org.springframework.security.crypto.password.PasswordEncoder;
 
+import javax.annotation.Nonnull;
+import javax.annotation.ParametersAreNonnullByDefault;
 import java.sql.PreparedStatement;
 import java.sql.SQLException;
 import java.util.Optional;
@@ -18,6 +20,7 @@ import java.util.UUID;
 
 import static guru.qa.niffler.data.tpl.Connections.holder;
 
+@ParametersAreNonnullByDefault
 public class AuthUserRepositoryJdbc implements AuthUserRepository {
     private static final Config CFG = Config.getInstance();
     private static final PasswordEncoder pe = PasswordEncoderFactories.createDelegatingPasswordEncoder();
@@ -25,6 +28,7 @@ public class AuthUserRepositoryJdbc implements AuthUserRepository {
     private final AuthAuthorityDao authAuthorityDao = new AuthAuthorityDaoJdbc();
 
 
+    @Nonnull
     @Override
     public AuthUserEntity create(AuthUserEntity user) {
         authUserDao.createUser(user);
@@ -34,6 +38,7 @@ public class AuthUserRepositoryJdbc implements AuthUserRepository {
         return user;
     }
 
+    @Nonnull
     @Override
     public AuthUserEntity update(AuthUserEntity user) {
         try (PreparedStatement ps = holder(CFG.authJdbcUrl()).connection().prepareStatement(
@@ -63,11 +68,13 @@ public class AuthUserRepositoryJdbc implements AuthUserRepository {
         }
     }
 
+    @Nonnull
     @Override
     public Optional<AuthUserEntity> findById(UUID id) {
         return authUserDao.findById(id);
     }
 
+    @Nonnull
     @Override
     public Optional<AuthUserEntity> findByUsername(String username) {
         return findByUsername(username);
