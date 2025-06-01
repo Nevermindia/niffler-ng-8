@@ -27,7 +27,7 @@ import static guru.qa.niffler.condition.StatConditions.*;
 import static org.junit.jupiter.api.Assertions.assertFalse;
 
 @ParametersAreNonnullByDefault
-public class MainPage {
+public class MainPage extends BasePage<MainPage> {
 
     private final Header header = new Header();
     private final SpendingTable spendingTable = new SpendingTable();

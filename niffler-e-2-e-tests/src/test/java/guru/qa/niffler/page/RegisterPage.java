@@ -11,7 +11,7 @@ import static com.codeborne.selenide.Condition.*;
 import static com.codeborne.selenide.Selenide.$;
 
 @ParametersAreNonnullByDefault
-public class RegisterPage {
+public class RegisterPage extends BasePage<RegisterPage> {
     public static final String URL = Config.getInstance().authUrl() + "register";
 
     private final SelenideElement usernameInput = $("input[name='username']");

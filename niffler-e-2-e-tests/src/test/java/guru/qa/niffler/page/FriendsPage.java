@@ -18,7 +18,7 @@ import static com.codeborne.selenide.Selenide.$;
 import static com.codeborne.selenide.Selenide.$$;
 
 @ParametersAreNonnullByDefault
-public class FriendsPage {
+public class FriendsPage extends BasePage<FriendsPage> {
     public static final String URL = Config.getInstance().authUrl() + "people/friends";
     private final SearchField searchField = new SearchField();
     private final SelenideElement friendTable = $("#friends");
