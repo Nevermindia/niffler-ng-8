@@ -46,14 +46,6 @@ public class MainPage {
         return spendingTable;
     }
 
-
-    @Step("Delete spending with description {0}")
-    @Nonnull
-    public MainPage deleteSpending(String spendingDescription) {
-        getSpendingTable().deleteSpending(spendingDescription);
-        return new MainPage();
-    }
-
     @Step("Check Main page is opened")
     @Nonnull
     public MainPage checkMainPageIsOpened() {

@@ -50,12 +50,12 @@ public class Calendar {
         int currentMonthIndex = Month.valueOf(currentMonthAndYear.getText().split(" ")[0].toUpperCase()).ordinal();
         while (monthIndex<currentMonthIndex){
             previousMonthBtn.click();
-            Selenide.sleep(2000);
+            Selenide.sleep(200);
             currentMonthIndex = Month.valueOf(currentMonthAndYear.getText().split(" ")[0].toUpperCase()).ordinal();
         }
         while (currentMonthIndex<monthIndex){
             nextMonthBtn.click();
-            Selenide.sleep(2000);
+            Selenide.sleep(200);
             currentMonthIndex = Month.valueOf(currentMonthAndYear.getText().split(" ")[0].toUpperCase()).ordinal();
         }
 

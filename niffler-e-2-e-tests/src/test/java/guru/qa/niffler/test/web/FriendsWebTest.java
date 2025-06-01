@@ -77,7 +77,6 @@ public class FriendsWebTest {
                 .checkFriendRequest(user.testData().incomeInvitations().get(0).username())
                 .acceptFriendRequest(user.testData().incomeInvitations().get(0).username());
 
-        Selenide.sleep(3000);
         new FriendsPage()
                 .checkNoFriendsRequests()
                 .checkFriendExistsInList(user.testData().incomeInvitations().get(0).username());

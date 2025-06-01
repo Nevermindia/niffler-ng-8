@@ -116,6 +116,7 @@ public class SpendingTest {
 
         Selenide.open(CFG.frontUrl(), LoginPage.class)
                 .doLogin(user.username(), user.testData().password())
+                .getSpendingTable()
                 .deleteSpending(user.testData().spendings().getFirst().description())
                 .checkStatisticDiagram(expected);
     }

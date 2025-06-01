@@ -77,6 +77,6 @@ public class ProfileTest {
                 .changeName(editName);
 
         Selenide.refresh();
-        new ProfilePage().changeName(editName);
+        new ProfilePage().checkName(editName);
     }
 }

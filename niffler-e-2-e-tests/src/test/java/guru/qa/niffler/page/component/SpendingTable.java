@@ -51,7 +51,7 @@ public class SpendingTable {
     }
 
     @Step("Delete spending with description {0}")
-    public SpendingTable deleteSpending(String description) {
+    public MainPage deleteSpending(String description) {
         searchField.search(description);
         tableRows.find(text(description))
                 .$$("td")
@@ -59,7 +59,7 @@ public class SpendingTable {
                 .click();
         deleteBtn.click();
         dialogWindow.$(byText("Delete")).click();
-        return this;
+        return new MainPage();
     }
 
     @Step("Search spending with description {0}")

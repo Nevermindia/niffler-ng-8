@@ -18,7 +18,6 @@ public class SearchField {
     @Step("Search by query {0}")
     @Nonnull
     public SearchField search(String query) {
-        clearIfNotEmpty();
         self.setValue(query).pressEnter();
         return this;
     }
