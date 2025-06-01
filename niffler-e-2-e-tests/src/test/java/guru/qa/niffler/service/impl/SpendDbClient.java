@@ -9,8 +9,13 @@ import guru.qa.niffler.data.tpl.XaTransactionTemplate;
 import guru.qa.niffler.model.CategoryJson;
 import guru.qa.niffler.model.SpendJson;
 import guru.qa.niffler.service.SpendClient;
+import io.qameta.allure.Step;
+
+import javax.annotation.Nonnull;
+import javax.annotation.ParametersAreNonnullByDefault;
 
 
+@ParametersAreNonnullByDefault
 public class SpendDbClient implements SpendClient {
     private static final Config CFG = Config.getInstance();
     private final XaTransactionTemplate xaTransactionTemplate = new XaTransactionTemplate(
@@ -19,6 +24,8 @@ public class SpendDbClient implements SpendClient {
 
     private final SpendRepository spendRepository = new SpendRepositoryHibernate();
 
+    @Step("Create spend using SQL")
+    @Nonnull
     @Override
     public SpendJson createSpend(SpendJson spend) {
         return xaTransactionTemplate.execute(() -> SpendJson.fromEntity(
@@ -26,6 +33,8 @@ public class SpendDbClient implements SpendClient {
         );
     }
 
+    @Step("Create category using SQL")
+    @Nonnull
     @Override
     public CategoryJson createCategory(CategoryJson category) {
         return xaTransactionTemplate.execute(() -> CategoryJson.fromEntity(

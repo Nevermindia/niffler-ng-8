@@ -4,9 +4,13 @@ import com.codeborne.selenide.SelenideElement;
 import guru.qa.niffler.config.Config;
 import io.qameta.allure.Step;
 
+import javax.annotation.Nonnull;
+import javax.annotation.ParametersAreNonnullByDefault;
+
 import static com.codeborne.selenide.Condition.*;
 import static com.codeborne.selenide.Selenide.$;
 
+@ParametersAreNonnullByDefault
 public class RegisterPage {
     public static final String URL = Config.getInstance().authUrl() + "register";
 
@@ -18,36 +22,42 @@ public class RegisterPage {
     private final SelenideElement errorMessage = $(".form__error");
 
     @Step("Set username: '{0}'")
+    @Nonnull
     public RegisterPage setUserName(String username) {
         usernameInput.setValue(username);
         return this;
     }
 
     @Step("Set password: '{0}'")
+    @Nonnull
     public RegisterPage setPassword(String password) {
         passwordInput.setValue(password);
         return this;
     }
 
     @Step("Submit password: '{0}'")
+    @Nonnull
     public RegisterPage setPasswordSubmit(String password) {
         submitPasswordInput.setValue(password);
         return this;
     }
 
     @Step("Click sign up button")
+    @Nonnull
     public RegisterPage submitRegistration() {
         signUpBtn.click();
         return this;
     }
 
     @Step("Click Sign in button")
+    @Nonnull
     public RegisterPage clickSignInBtn() {
         signInBtn.click();
         return this;
     }
 
     @Step("Register with username - '{0}', password - '{1}'")
+    @Nonnull
     public LoginPage doRegister(String username, String password, String submitPassword) {
         usernameInput.setValue(username);
         passwordInput.setValue(password);
@@ -58,6 +68,7 @@ public class RegisterPage {
     }
 
     @Step("Check error message with text '{errorText}'")
+    @Nonnull
     public RegisterPage checkErrorMessage(String errorText) {
         errorMessage.shouldBe(visible).shouldHave(exactText(errorText));
         return this;

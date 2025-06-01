@@ -9,14 +9,17 @@ import guru.qa.niffler.test.web.utils.ScreenDiffResult;
 import io.qameta.allure.Step;
 import lombok.SneakyThrows;
 
+import javax.annotation.Nonnull;
+import javax.annotation.ParametersAreNonnullByDefault;
 import javax.imageio.ImageIO;
 import java.awt.image.BufferedImage;
+import java.io.IOException;
 
-import static com.codeborne.selenide.Condition.text;
-import static com.codeborne.selenide.Condition.visible;
+import static com.codeborne.selenide.Condition.*;
 import static com.codeborne.selenide.Selenide.*;
 import static org.junit.jupiter.api.Assertions.assertFalse;
 
+@ParametersAreNonnullByDefault
 public class ProfilePage {
 
     public static String url = Config.getInstance().frontUrl() + "profile";
@@ -30,33 +33,50 @@ public class ProfilePage {
     private final SelenideElement showArchivedSwitch = $("input[type='checkbox']");
     private final ElementsCollection categories = $$(".MuiChip-label");
 
-    //private final Calendar calendar = new Calendar()
-
     @Step("Click on archived category switch")
+    @Nonnull
     public ProfilePage clickOnArchivedCategorySwitch() {
         showArchivedSwitch.click();
         return new ProfilePage();
     }
 
     @Step("Check category '{0}' exists")
+    @Nonnull
     public ProfilePage checkCategoryExists(String category) {
         categories.find(text(category)).shouldBe(visible);
         return new ProfilePage();
     }
 
-    @SneakyThrows
+
     @Step("Check profile avatar")
-    public ProfilePage checkAvatar(BufferedImage expected) {
+    @Nonnull
+    public ProfilePage checkAvatar(BufferedImage expected) throws IOException {
         Selenide.sleep(3000);
         BufferedImage actual = ImageIO.read(avatar.screenshot());
         assertFalse(new ScreenDiffResult(expected, actual));
         return this;
     }
 
-    @SneakyThrows
     @Step("Upload avatar")
+    @Nonnull
     public ProfilePage uploadAvatar(String path) {
         pictureInput.uploadFromClasspath(path);
+        return this;
+    }
+
+    @Step("Change name")
+    @Nonnull
+    public ProfilePage changeName(String name) {
+        nameInput.clear();
+        nameInput.setValue(name).pressEnter();
+        saveChangesBtn.click();
+        return this;
+    }
+
+    @Step("Check name")
+    @Nonnull
+    public ProfilePage checkName(String name) {
+        nameInput.shouldHave(value(name));
         return this;
     }
 }
