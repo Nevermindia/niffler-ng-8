@@ -6,6 +6,7 @@ import guru.qa.niffler.config.Config;
 import guru.qa.niffler.model.CategoryJson;
 import guru.qa.niffler.model.CurrencyValues;
 import guru.qa.niffler.model.SpendJson;
+import guru.qa.niffler.service.RestClient;
 import guru.qa.niffler.service.SpendClient;
 import io.qameta.allure.Step;
 import io.qameta.allure.okhttp3.AllureOkHttp3;
@@ -24,22 +25,14 @@ import java.util.List;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
 @ParametersAreNonnullByDefault
-public class SpendApiClient implements SpendClient {
+public class SpendApiClient extends RestClient implements SpendClient{
 
-    private static final Config CFG = Config.getInstance();
+    private final SpendApi spendApi;
 
-    private final OkHttpClient client = new OkHttpClient.Builder().
-            addNetworkInterceptor(new AllureOkHttp3()
-                    .setRequestTemplate("my-http-request.ftl")
-                    .setResponseTemplate("my-http-response.ftl"))
-            .build();
-    private final Retrofit retrofit = new Retrofit.Builder()
-            .baseUrl(CFG.spendUrl())
-            .client(client)
-            .addConverterFactory(JacksonConverterFactory.create())
-            .build();
-
-    private final SpendApi spendApi = retrofit.create(SpendApi.class);
+    public SpendApiClient(String baseUrl) {
+        super(CFG.spendUrl());
+        this.spendApi = retrofit.create(SpendApi.class);
+    }
 
     @Step("Create spend using REST API")
     @Nonnull
