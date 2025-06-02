@@ -22,9 +22,8 @@ import static com.codeborne.selenide.Selenide.$$;
 import static guru.qa.niffler.condition.SpendConditions.spend;
 
 @ParametersAreNonnullByDefault
-public class SpendingTable {
+public class SpendingTable extends BaseComponent<SpendingTable>{
     private final SearchField searchField = new SearchField();
-    private final SelenideElement self = $("#spendings");
     private final SelenideElement dateFilter = self.$("#period");
     private final SelenideElement currencyFilter = self.$("#currency");
     private final ElementsCollection menuItems = $$("ul[role=\"listbox\"]");
@@ -32,6 +31,9 @@ public class SpendingTable {
     private final ElementsCollection tableRows = self.$("tbody").$$("tr");
     private final SelenideElement dialogWindow = $("div[role='dialog']");
 
+    public SpendingTable() {
+        super($("#spendings"));
+    }
 
     @Step("Select period {0}")
     public SpendingTable selectPeriod(DataFilterValues period) {

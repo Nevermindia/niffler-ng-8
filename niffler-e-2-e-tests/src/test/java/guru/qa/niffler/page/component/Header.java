@@ -13,18 +13,21 @@ import static com.codeborne.selenide.Condition.visible;
 import static com.codeborne.selenide.Selenide.$;
 
 @ParametersAreNonnullByDefault
-public class Header {
+public class Header extends BaseComponent<Header> {
 
-    private final SelenideElement self = $("#root header");
     private final SelenideElement title = self.$("a[href=\"/main\"]");
     private final SelenideElement newSpendingBtn = self.$("a[href=\"/spending\"]");
     private final SelenideElement menuBtn = self.$("button[aria-label=\"Menu\"]");
     private final SelenideElement menu = $("ul[role=\"menu\"]");
     private final ElementsCollection menuItems = menu.$$("li[role=\"menuitem\"]");
 
+    public Header() {
+        super($("#root header"));
+    }
+
     @Step("Check header title text")
-    public void checkHeaderText(){
-       title.shouldHave(text("Niffler"));
+    public void checkHeaderText() {
+        title.shouldHave(text("Niffler"));
     }
 
     @Step("Go to Friends page")

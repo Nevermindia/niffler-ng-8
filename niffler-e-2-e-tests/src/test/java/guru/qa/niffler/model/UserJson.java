@@ -7,7 +7,6 @@ import guru.qa.niffler.data.entity.userdata.UserEntity;
 
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
-import javax.annotation.ParametersAreNonnullByDefault;
 import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
 import java.util.UUID;
@@ -50,14 +49,29 @@ public record UserJson(
         );
     }
     public UserJson withPassword(@Nonnull String password){
-        return withTestData(
-                new TestData(password,
-                        testData.categories(),
-                        testData.spendings(),
-                        testData.friends(),
-                        testData.incomeInvitations(),
-                        testData.outcomeInvitations())
-        );
+        if (testData == null) {
+            return withTestData(
+                    new TestData(
+                            password,
+                            new ArrayList<>(),
+                            new ArrayList<>(),
+                            new ArrayList<>(),
+                            new ArrayList<>(),
+                            new ArrayList<>()
+                    )
+            );
+        } else {
+            return withTestData(
+                    new TestData(
+                            password,
+                            testData.categories(),
+                            testData.spendings(),
+                            testData.friends(),
+                            testData.outcomeInvitations(),
+                            testData.incomeInvitations()
+                    )
+            );
+        }
     }
 
     public UserJson withTestData(@Nonnull TestData testData){

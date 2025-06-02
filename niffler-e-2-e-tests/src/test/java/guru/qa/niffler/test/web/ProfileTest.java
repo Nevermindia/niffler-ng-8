@@ -11,7 +11,6 @@ import guru.qa.niffler.model.UserJson;
 import guru.qa.niffler.page.LoginPage;
 import guru.qa.niffler.page.MainPage;
 import guru.qa.niffler.page.ProfilePage;
-import guru.qa.niffler.page.component.Header;
 import guru.qa.niffler.test.web.utils.RandomDataUtils;
 import guru.qa.niffler.test.web.utils.SelenideUtils;
 import org.junit.jupiter.api.Test;
@@ -31,7 +30,7 @@ public class ProfileTest {
     @Test
     void archivedCategoryShouldPresentInCategoriesList(UserJson user) {
         final CategoryJson archivedCategory = user.testData().categories().getFirst();
-        driver.open(LoginPage.URL, LoginPage.class)
+        Selenide.open(LoginPage.URL, LoginPage.class)
                 .doLogin(user.username(), user.testData().password())
                 .checkMainPageIsOpened();
         new MainPage().getHeader()
@@ -45,7 +44,7 @@ public class ProfileTest {
     )
     @Test
     void activeCategoryShouldPresentInCategoriesList(UserJson user) {
-        driver.open(LoginPage.URL, LoginPage.class)
+        Selenide.open(LoginPage.URL, LoginPage.class)
                 .doLogin(user.username(), user.testData().password())
                 .checkMainPageIsOpened();
         new MainPage().getHeader()
@@ -74,7 +73,8 @@ public class ProfileTest {
                 .checkMainPageIsOpened()
                 .getHeader()
                 .toProfilePage()
-                .changeName(editName);
+                .changeName(editName)
+                .checkAlertMessage("Profile successfully updated");
 
         Selenide.refresh();
         new ProfilePage().checkName(editName);
