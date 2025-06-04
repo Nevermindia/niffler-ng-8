@@ -2,18 +2,13 @@ package guru.qa.niffler.service.impl;
 
 
 import guru.qa.niffler.api.SpendApi;
-import guru.qa.niffler.config.Config;
 import guru.qa.niffler.model.CategoryJson;
 import guru.qa.niffler.model.CurrencyValues;
 import guru.qa.niffler.model.SpendJson;
 import guru.qa.niffler.service.RestClient;
 import guru.qa.niffler.service.SpendClient;
 import io.qameta.allure.Step;
-import io.qameta.allure.okhttp3.AllureOkHttp3;
-import okhttp3.OkHttpClient;
 import retrofit2.Response;
-import retrofit2.Retrofit;
-import retrofit2.converter.jackson.JacksonConverterFactory;
 
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
@@ -29,7 +24,7 @@ public class SpendApiClient extends RestClient implements SpendClient{
 
     private final SpendApi spendApi;
 
-    public SpendApiClient(String baseUrl) {
+    public SpendApiClient() {
         super(CFG.spendUrl());
         this.spendApi = retrofit.create(SpendApi.class);
     }

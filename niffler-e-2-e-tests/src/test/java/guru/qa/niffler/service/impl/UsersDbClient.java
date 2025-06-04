@@ -44,7 +44,6 @@ public class UsersDbClient implements UsersClient {
             new JdbcTransactionManager(dataSource(CFG.authJdbcUrl())));
 
 
-    @Override
     @Step("Create user using SQL")
     public UserJson createUser(UserJson user) {
         return xaTransactionTemplate.execute(() -> {

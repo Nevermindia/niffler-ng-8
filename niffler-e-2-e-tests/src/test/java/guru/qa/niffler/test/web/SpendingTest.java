@@ -175,6 +175,7 @@ public class SpendingTest {
                 .getHeader()
                 .goToAddSpending()
                 .addNewSpending(spend)
+                .checkAlertMessage("New spending is successfully created")
                 .getSpendingTable()
                 .checkSpendTable(spend);
     }

@@ -9,11 +9,13 @@ import javax.annotation.ParametersAreNonnullByDefault;
 import static com.codeborne.selenide.Selenide.$;
 
 @ParametersAreNonnullByDefault
-public class SearchField {
+public class SearchField extends BaseComponent<SearchField> {
 
-    private final SelenideElement self = $("input[aria-label=\"search\"]");
     private final SelenideElement clearBtn = $("#input-clear");
 
+    public SearchField() {
+        super($("input[aria-label=\"search\"]"));
+    }
 
     @Step("Search by query {0}")
     @Nonnull

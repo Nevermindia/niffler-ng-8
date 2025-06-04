@@ -1,57 +1,80 @@
 package guru.qa.niffler.service.impl;
 
+import com.google.common.base.Stopwatch;
 import guru.qa.niffler.api.UsersApi;
-import guru.qa.niffler.config.Config;
+import guru.qa.niffler.api.core.ThreadSafeCookieStore;
 import guru.qa.niffler.model.UserJson;
+import guru.qa.niffler.service.RestClient;
 import guru.qa.niffler.service.UsersClient;
 import io.qameta.allure.Step;
-import io.qameta.allure.okhttp3.AllureOkHttp3;
-import okhttp3.OkHttpClient;
 import retrofit2.Response;
-import retrofit2.Retrofit;
-import retrofit2.converter.jackson.JacksonConverterFactory;
 
 import javax.annotation.Nonnull;
 import javax.annotation.ParametersAreNonnullByDefault;
 import java.io.IOException;
+import java.util.concurrent.TimeUnit;
 
 import static guru.qa.niffler.test.web.utils.RandomDataUtils.randomUsername;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
 @ParametersAreNonnullByDefault
-public class UsersApiClient implements UsersClient {
-    private static final Config CFG = Config.getInstance();
+public class UsersApiClient extends RestClient implements UsersClient {
 
-    private final OkHttpClient client = new OkHttpClient.Builder().
-            addNetworkInterceptor(new AllureOkHttp3()
-                    .setRequestTemplate("my-http-request.ftl")
-                    .setResponseTemplate("my-http-response.ftl"))
-            .build();
-    private final Retrofit retrofit = new Retrofit.Builder()
-            .baseUrl(CFG.userdataUrl())
-            .client(client)
-            .addConverterFactory(JacksonConverterFactory.create())
-            .build();
+    private final UsersApi usersApi;
+    private final AuthApiClient authApi = new AuthApiClient();
 
-    private final UsersApi usersApi = retrofit.create(UsersApi.class);
-
-    @Nonnull
-    @Override
-    @Step("Create user using API")
-    public UserJson createUser(UserJson user) {
-        throw new UnsupportedOperationException("Method not implemented yet");
+    public UsersApiClient() {
+        super(CFG.userdataUrl());
+        usersApi = retrofit.create(UsersApi.class);
     }
 
     @Nonnull
     @Override
     @Step("Create user using API")
-    public UserJson createUser(String username, String password) {
-        throw new UnsupportedOperationException("Method not implemented yet");
+    public UserJson createUser(@Nonnull String username, String password) {
+        authApi.requestRegisterForm();
+        authApi.register(
+                ThreadSafeCookieStore.INSTANCE.cookieValue("XSRF-TOKEN"),
+                username,
+                password,
+                password
+        );
+
+        long maxWaitTime = 5000L;
+        Stopwatch sw = Stopwatch.createStarted();
+
+        while (sw.elapsed(TimeUnit.MILLISECONDS) < maxWaitTime) {
+            try{
+                UserJson userJson = currentUser(username);
+                if (userJson != null && userJson.id() != null) {
+                    return userJson;
+                } else {
+                    Thread.sleep(100);
+                }
+            } catch (InterruptedException e){
+                throw new RuntimeException(e);
+            }
+        }
+        throw new AssertionError("User was not found in userdata");
+    }
+
+
+    @Nonnull
+    public UserJson currentUser(@Nonnull String username){
+        final Response<UserJson> response;
+        try {
+            response = usersApi.currentUser(username)
+                    .execute();
+        } catch (IOException e) {
+            throw new AssertionError(e);
+        }
+        assertEquals(200, response.code());
+        return response.body();
     }
 
     @Step("Add friend using API")
     @Override
-    public void addFriend(UserJson user, int count) {
+    public void addFriend(@Nonnull UserJson user, int count) {
         if (count > 0) {
             for (int i = 0; i < count; i++) {
                 final Response<UserJson> response;
@@ -74,7 +97,7 @@ public class UsersApiClient implements UsersClient {
 
     @Step("Add income invitation using API")
     @Override
-    public void addIncomeInvitation(UserJson targetUser, int count) {
+    public void addIncomeInvitation(@Nonnull UserJson targetUser, int count) {
         if (count > 0) {
             for (int i = 0; i < count; i++) {
                 final Response<UserJson> response;
@@ -96,7 +119,7 @@ public class UsersApiClient implements UsersClient {
 
     @Step("Add outcome invitation using API")
     @Override
-    public void addOutcomeInvitation(UserJson targetUser, int count) {
+    public void addOutcomeInvitation(@Nonnull UserJson targetUser, int count) {
         if (count > 0) {
             for (int i = 0; i < count; i++) {
                 final Response<UserJson> response;
