@@ -12,6 +12,8 @@ import retrofit2.Response;
 import javax.annotation.Nonnull;
 import javax.annotation.ParametersAreNonnullByDefault;
 import java.io.IOException;
+import java.util.Collections;
+import java.util.List;
 import java.util.concurrent.TimeUnit;
 
 import static guru.qa.niffler.test.web.utils.RandomDataUtils.randomUsername;
@@ -58,7 +60,7 @@ public class UsersApiClient extends RestClient implements UsersClient {
         throw new AssertionError("User was not found in userdata");
     }
 
-
+    @Step("Get current user using API")
     @Nonnull
     public UserJson currentUser(@Nonnull String username){
         final Response<UserJson> response;
@@ -70,6 +72,20 @@ public class UsersApiClient extends RestClient implements UsersClient {
         }
         assertEquals(200, response.code());
         return response.body();
+    }
+
+    @Step("Get all users using API")
+    @Nonnull
+    public List<UserJson> allUsers(@Nonnull String username, @Nonnull String searchQuery){
+        final Response<List<UserJson>> response;
+        try {
+            response = usersApi.allUsers(username, searchQuery)
+                    .execute();
+        } catch (IOException e) {
+            throw new AssertionError(e);
+        }
+        assertEquals(200, response.code());
+        return response.body() != null ? response.body() : Collections.emptyList();
     }
 
     @Step("Add friend using API")
