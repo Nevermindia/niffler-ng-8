@@ -48,6 +48,15 @@ public record UserJson(
                 new TestData(null, new ArrayList<>(), new ArrayList<>(), new ArrayList<>(), new ArrayList<>(), new ArrayList<>())
         );
     }
+
+    public UserJson(@Nonnull String username) {
+        this(username, null);
+    }
+
+    public UserJson(@Nonnull String username, @Nullable TestData testData) {
+        this(null, username, null, null, null, null, null, null, null, testData);
+    }
+
     public UserJson withPassword(@Nonnull String password){
         if (testData == null) {
             return withTestData(

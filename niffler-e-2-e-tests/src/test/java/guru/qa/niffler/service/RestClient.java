@@ -12,6 +12,7 @@ import retrofit2.Converter;
 import retrofit2.Retrofit;
 import retrofit2.converter.jackson.JacksonConverterFactory;
 
+import javax.annotation.Nullable;
 import java.net.CookieManager;
 import java.net.CookiePolicy;
 
@@ -30,6 +31,10 @@ public abstract class RestClient {
 
     public RestClient(String baseUrl, Converter.Factory factory) {
         this(baseUrl, false, JacksonConverterFactory.create(), HttpLoggingInterceptor.Level.BODY);
+    }
+
+    public RestClient(String baseUrl, boolean followRedirect, @Nullable Interceptor... interceptors) {
+        this(baseUrl, followRedirect, JacksonConverterFactory.create(), HttpLoggingInterceptor.Level.HEADERS, interceptors);
     }
 
     public RestClient(String baseUrl,

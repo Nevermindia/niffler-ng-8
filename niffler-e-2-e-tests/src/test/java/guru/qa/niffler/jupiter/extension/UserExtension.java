@@ -4,7 +4,6 @@ import guru.qa.niffler.jupiter.annotation.meta.User;
 import guru.qa.niffler.model.UserJson;
 import guru.qa.niffler.service.UsersClient;
 import guru.qa.niffler.service.impl.UsersApiClient;
-import guru.qa.niffler.service.impl.UsersDbClient;
 import guru.qa.niffler.test.web.utils.RandomDataUtils;
 import org.junit.jupiter.api.extension.*;
 import org.junit.platform.commons.support.AnnotationSupport;
@@ -28,8 +27,7 @@ public class UserExtension implements BeforeEachCallback, ParameterResolver {
                         usersClient.addIncomeInvitation(user, anno.incomeInvitations());
                         usersClient.addOutcomeInvitation(user, anno.outcomeInvitations());
                         usersClient.addFriend(user, anno.friends());
-                        context.getStore(NAMESPACE)
-                                .put(context.getUniqueId(), user.withPassword(defaultPassword));
+                        setUser(user);
                     }
                 });
     }
@@ -41,11 +39,17 @@ public class UserExtension implements BeforeEachCallback, ParameterResolver {
 
     @Override
     public UserJson resolveParameter(ParameterContext parameterContext, ExtensionContext extensionContext) throws ParameterResolutionException {
-        return createdUser();
+        return getUserJson();
     }
 
-    public static UserJson createdUser(){
+    public static UserJson getUserJson(){
         final ExtensionContext context = TestMethodContextExtension.context();
         return context.getStore(NAMESPACE).get(context.getUniqueId(), UserJson.class);
+    }
+
+    public static void setUser(UserJson user) {
+        final ExtensionContext context = TestMethodContextExtension.context();
+        context.getStore(NAMESPACE)
+                .put(context.getUniqueId(), user.withPassword(defaultPassword));
     }
 }
