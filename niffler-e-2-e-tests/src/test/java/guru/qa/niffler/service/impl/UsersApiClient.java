@@ -15,7 +15,10 @@ import java.io.IOException;
 import java.util.Collections;
 import java.util.List;
 import java.util.concurrent.TimeUnit;
+import java.util.stream.Collectors;
 
+import static guru.qa.niffler.data.entity.userdata.FriendshipStatus.INVITE_RECEIVED;
+import static guru.qa.niffler.data.entity.userdata.FriendshipStatus.INVITE_SENT;
 import static guru.qa.niffler.test.web.utils.RandomDataUtils.randomUsername;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
@@ -86,6 +89,55 @@ public class UsersApiClient extends RestClient implements UsersClient {
         }
         assertEquals(200, response.code());
         return response.body() != null ? response.body() : Collections.emptyList();
+    }
+
+    @Step("Get user's friends using API")
+    @Nonnull
+    public List<UserJson> getFriends(@Nonnull String username){
+        final Response<List<UserJson>> response;
+        try {
+            response = usersApi.friends(username, null)
+                    .execute();
+        } catch (IOException e) {
+            throw new AssertionError(e);
+        }
+        assertEquals(200, response.code());
+        return response.body() != null ? response.body() : Collections.emptyList();
+    }
+
+    @Step("Get all user's people using API")
+    @Nonnull
+    public List<UserJson> getAllPeople(@Nonnull String username){
+        final Response<List<UserJson>> response;
+        try {
+            response = usersApi.allUsers(username, null)
+                    .execute();
+        } catch (IOException e) {
+            throw new AssertionError(e);
+        }
+        assertEquals(200, response.code());
+        return response.body() != null ? response.body() : Collections.emptyList();
+    }
+
+    @Step("Get user's income invitations using API")
+    @Nonnull
+    public List<UserJson> getIncomeInvitations(@Nonnull String username){
+        List<UserJson> friends = getFriends(username);
+
+        return friends.stream()
+                .filter(userJson -> userJson.friendshipStatus().equals(INVITE_RECEIVED))
+                .toList();
+    }
+
+    @Step("Get user's outcome invitations using API")
+    @Nonnull
+    public List<UserJson> getOutcomeInvitations(@Nonnull String username){
+        List<UserJson> allPeople = getAllPeople(username);
+
+        return allPeople.stream()
+                .filter(userJson -> userJson.friendshipStatus() != null)
+                .filter(userJson -> userJson.friendshipStatus().equals(INVITE_SENT))
+                .collect(Collectors.toList());
     }
 
     @Step("Add friend using API")

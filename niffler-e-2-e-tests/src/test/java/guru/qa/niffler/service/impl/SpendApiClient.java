@@ -15,6 +15,7 @@ import javax.annotation.Nullable;
 import javax.annotation.ParametersAreNonnullByDefault;
 import java.io.IOException;
 import java.util.Collections;
+import java.util.Date;
 import java.util.List;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
@@ -74,11 +75,13 @@ public class SpendApiClient extends RestClient implements SpendClient{
 
     @Step("Get all spends using REST API")
     @Nonnull
-    public List<SpendJson> getAllSpends(String filterPeriod,
-                                  @Nullable CurrencyValues filterCurrency) {
+    public List<SpendJson> getAllSpends(String username,
+                                        @Nullable CurrencyValues currencyValues,
+                                        @Nullable Date from,
+                                        @Nullable Date to) {
         final Response<List<SpendJson>> response;
         try {
-            response = spendApi.getAllSpends(filterPeriod, filterCurrency)
+            response = spendApi.getAllSpends(username, currencyValues, from, to)
                     .execute();
         } catch (IOException e) {
             throw new AssertionError(e);
@@ -132,10 +135,10 @@ public class SpendApiClient extends RestClient implements SpendClient{
 
     @Step("Get all categories using REST API")
     @Nonnull
-    public List<CategoryJson> getAllCategories(Boolean excludeArchived) {
+    public List<CategoryJson> getAllCategories(String username, boolean excludeArchived) {
         final Response<List<CategoryJson>> response;
         try {
-            response = spendApi.getAllCategories(excludeArchived)
+            response = spendApi.getAllCategories(username, excludeArchived)
                     .execute();
         } catch (IOException e) {
             throw new AssertionError(e);
