@@ -2,6 +2,7 @@ package guru.qa.niffler.test.web;
 
 import com.codeborne.selenide.Selenide;
 import com.codeborne.selenide.SelenideDriver;
+import guru.qa.niffler.jupiter.annotation.ApiLogin;
 import guru.qa.niffler.jupiter.annotation.Category;
 import guru.qa.niffler.jupiter.annotation.ScreenShotTest;
 import guru.qa.niffler.jupiter.annotation.meta.User;
@@ -20,57 +21,52 @@ import java.io.IOException;
 
 @WebTest
 public class ProfileTest {
-    private final SelenideDriver driver = new SelenideDriver(SelenideUtils.chromeConfig);
 
+    @Test
     @User(
             categories = @Category(
                     archived = true
             )
     )
-    @Test
+    @ApiLogin
     void archivedCategoryShouldPresentInCategoriesList(UserJson user) {
         final CategoryJson archivedCategory = user.testData().categories().getFirst();
-        Selenide.open(LoginPage.URL, LoginPage.class)
-                .doLogin(user.username(), user.testData().password())
-                .checkMainPageIsOpened();
         new MainPage().getHeader()
                 .toProfilePage()
                 .clickOnArchivedCategorySwitch()
                 .checkCategoryExists(archivedCategory.name());
     }
 
+    @Test
     @User(
             categories = @Category()
     )
-    @Test
+
+    @ApiLogin
     void activeCategoryShouldPresentInCategoriesList(UserJson user) {
-        Selenide.open(LoginPage.URL, LoginPage.class)
-                .doLogin(user.username(), user.testData().password())
-                .checkMainPageIsOpened();
         new MainPage().getHeader()
                 .toProfilePage()
                 .checkCategoryExists(user.testData().categories().getFirst().name());
     }
 
-    @User
+
     @ScreenShotTest(value = "img/expected-avatar.png")
+    @User
+    @ApiLogin
     void checkProfileImageTest(UserJson user, BufferedImage expectedProfileImage) throws IOException {
-        Selenide.open(LoginPage.URL, LoginPage.class)
-                .doLogin(user.username(), user.testData().password())
-                .checkMainPageIsOpened()
+        new MainPage()
                 .getHeader()
                 .toProfilePage()
                 .uploadAvatar("img/avatar.png")
                 .checkAvatar(expectedProfileImage);
     }
 
-    @User()
     @Test
+    @User()
+    @ApiLogin
     void editProfile(UserJson user) {
         String editName = RandomDataUtils.randomName();
-        Selenide.open(LoginPage.URL, LoginPage.class)
-                .doLogin(user.username(), user.testData().password())
-                .checkMainPageIsOpened()
+       new MainPage()
                 .getHeader()
                 .toProfilePage()
                 .changeName(editName)
