@@ -22,7 +22,7 @@ public class SpendDbClient implements SpendClient {
             CFG.spendJdbcUrl()
     );
 
-    private final SpendRepository spendRepository = new SpendRepositoryHibernate();
+    private final SpendRepository spendRepository = SpendRepository.getInstance();
 
     @Step("Create spend using SQL")
     @Nonnull
