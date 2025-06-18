@@ -31,10 +31,16 @@ public class GatewayV2ApiClient extends RestClient {
     public RestResponsePage<UserJson> allFriends(String bearerToken,
                                                  int page,
                                                  int size,
+                                                 @Nullable String sort,
                                                  @Nullable String searchQuery) {
         final Response<RestResponsePage<UserJson>> response;
         try {
-            response = gatewayApi.allFriends(bearerToken, page, size, searchQuery)
+            response = gatewayApi.allFriends(
+                            bearerToken,
+                            page,
+                            size,
+                            sort,
+                            searchQuery)
                     .execute();
         } catch (IOException e) {
             throw new AssertionError(e);
