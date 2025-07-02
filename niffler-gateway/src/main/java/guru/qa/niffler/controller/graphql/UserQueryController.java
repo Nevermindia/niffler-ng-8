@@ -91,6 +91,15 @@ public class UserQueryController {
       if (selectors != null && selectors.size() > depth) {
         throw new TooManySubQueriesException("Can`t fetch over 2 " + queryKey + " sub-queries");
       }
+      if ("friends".equals(queryKey)) {
+        selectors.forEach(field -> {
+          if (field.getSelectionSet().getFieldsGroupedByResultKey().containsKey("friends")) {
+            throw new IllegalGqlFieldAccessException(
+                    "Nested friends queries are forbidden"
+            );
+          }
+        });
+      }
     }
   }
 }
