@@ -1,5 +1,6 @@
 package guru.qa.niffler.jupiter.extension;
 
+import com.codeborne.selenide.Configuration;
 import com.codeborne.selenide.SelenideDriver;
 import com.codeborne.selenide.logevents.SelenideLogger;
 import io.qameta.allure.Allure;
@@ -11,6 +12,7 @@ import org.junit.jupiter.api.extension.LifecycleMethodExecutionExceptionHandler;
 import org.junit.jupiter.api.extension.TestExecutionExceptionHandler;
 import org.openqa.selenium.OutputType;
 import org.openqa.selenium.TakesScreenshot;
+import org.openqa.selenium.chrome.ChromeOptions;
 
 import javax.annotation.ParametersAreNonnullByDefault;
 import java.io.ByteArrayInputStream;
@@ -23,6 +25,17 @@ public class BrowserExtension implements
         AfterEachCallback,
         TestExecutionExceptionHandler,
         LifecycleMethodExecutionExceptionHandler {
+
+    static {
+        Configuration.browser = "chrome";
+        Configuration.timeout = 8000;
+        Configuration.pageLoadStrategy = "eager";
+        if ("docker".equals(System.getProperty("test.env"))) {
+            Configuration.remote = "http://selenoid:4444/wd/hub";
+            Configuration.browserCapabilities = new ChromeOptions().addArguments("--no-sandbox");
+            Configuration.browserVersion = "127.0";
+        }
+    }
 
     private final ThreadLocal<List<SelenideDriver>> drivers = ThreadLocal.withInitial(ArrayList::new);
 

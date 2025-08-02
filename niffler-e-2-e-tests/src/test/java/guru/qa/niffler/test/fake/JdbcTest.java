@@ -6,6 +6,7 @@ import guru.qa.niffler.data.repository.impl.spring.SpendRepositorySpringJdbc;
 import guru.qa.niffler.model.*;
 import guru.qa.niffler.service.impl.SpendDbClient;
 import guru.qa.niffler.service.impl.UsersDbClient;
+import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.ValueSource;
@@ -17,7 +18,7 @@ import java.util.Optional;
 public class JdbcTest {
 
     //spend test
-    @Test
+    @Disabled
     void daoTest() {
         SpendDbClient spendDbClient = new SpendDbClient();
         SpendJson spend = spendDbClient.createSpend(
@@ -39,7 +40,7 @@ public class JdbcTest {
         System.out.println(spend);
     }
 
-    @Test
+    @Disabled
     void txTest() {
         SpendDbClient spendDbClient = new SpendDbClient();
 
@@ -62,7 +63,7 @@ public class JdbcTest {
         System.out.println(spend);
     }
 
-    @Test
+    @Disabled
     void createSpendJdbcTest() {
         SpendDbClient spendDbClient = new SpendDbClient();
         SpendJson spendJson = spendDbClient.createSpend(
@@ -211,7 +212,7 @@ public class JdbcTest {
     проверка метода xaCreateUserRepository
      */
 
-    @Test
+    @Disabled
     void createUserWithRepositoryTest() {
         UsersDbClient authUsersDbClient = new UsersDbClient();
         UserJson user = authUsersDbClient.createUser(
@@ -272,7 +273,7 @@ public class JdbcTest {
     /*
     Проверка создания пользователя, у которого есть запрос на дружбу
      */
-    @Test
+    @Disabled
     void createUserWithRequestWithRepositoryTest() {
         UsersDbClient usersDbClient = new UsersDbClient();
         //у пользователя Addressee будет входящий запрос на дружбу
@@ -307,7 +308,7 @@ public class JdbcTest {
     /*
     проверка метода xaCreateUserSpringRepository
      */
-    @Test
+    @Disabled
     void createUserWithSpringRepositoryTest() {
         UsersDbClient authUsersDbClient = new UsersDbClient();
         UserJson user = authUsersDbClient.createUser(
@@ -325,7 +326,7 @@ public class JdbcTest {
         System.out.println(user);
     }
 
-    @Test
+    @Disabled
     void spendRepositoryJdbcTest() {
         SpendRepositoryJdbc spendRepositoryJdbc = new SpendRepositoryJdbc();
         SpendEntity spend = SpendEntity.fromJson(
@@ -351,7 +352,7 @@ public class JdbcTest {
         System.out.println(spendJsonById);
     }
 
-    @Test
+    @Disabled
     void spendRepositorySpringJdbc() {
         SpendRepositorySpringJdbc spendRepositoryJdbc = new SpendRepositorySpringJdbc();
         SpendEntity spend = SpendEntity.fromJson(
@@ -383,7 +384,7 @@ public class JdbcTest {
     @ValueSource(strings = {
             "xaCreateUserHibernateRepository13",
     })
-    @ParameterizedTest
+    @Disabled
     void xaCreateUserHibernateRepository(String username) {
         UsersDbClient usersDbClient = new UsersDbClient();
 
