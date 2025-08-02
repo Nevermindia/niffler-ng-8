@@ -66,5 +66,11 @@ enum LocalConfig implements Config {
     public String userdataJdbcUrl() {
         return "jdbc:postgresql://127.0.0.1:5432/niffler-userdata";
     }
+
+    @Nonnull
+    @Override
+    public String allureDockerServiceUrl() {
+        return "http://127.0.0.1:5050/";
+    }
 }
 
