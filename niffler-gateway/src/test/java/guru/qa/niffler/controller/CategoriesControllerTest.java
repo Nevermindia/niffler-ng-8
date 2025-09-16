@@ -25,7 +25,7 @@ class CategoriesControllerTest {
     @WiremockStubs(value = {"getAllCategories.json"}, port = 8093)
     @Test
     void categoriesListShouldBeReturnedForCurrentUser() throws Exception {
-        final String fixtureUser = "bee";
+        final String fixtureUser = "duck";
 
         mockMvc.perform(get("/api/categories/all")
                         .with(jwt().jwt(c -> c.claim("sub", fixtureUser)))
